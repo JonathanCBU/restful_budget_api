@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "financify-api"
+version = "0.1.0"
+description = "A Django API for financify (winging it hard here)"
+authors = ["Jonathan Cook <jcookbme@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^5.0.3"
+
+[tool.poetry.group.dev.dependencies]
+tox = "^4.0.16"
+virtualenv = "20.21.0"
+bandit = "^1.7.1"
+black = {version = "^22.12.0", allow-prereleases = true}
+isort = {extras = ["colors"], version = "^5.11.4"}
+mypy = "^0.991"
+mypy-extensions = "^0.4.3"
+pylint = "^2.15.9"
+toml = "^0.10.2"
+ipython = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
