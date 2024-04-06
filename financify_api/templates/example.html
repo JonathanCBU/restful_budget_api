@@ -1,0 +1,10 @@
+<!doctype html>
+<html>
+<body>
+    {% for row in db_table %}
+    <h1>{{ row.date }}</h1>
+    <p>Asset type: {{ row.asset_type }}</p>
+    <p>Dollar value: ${{ row.value }}</p>
+    {% endfor %}
+</body>
+</html>
