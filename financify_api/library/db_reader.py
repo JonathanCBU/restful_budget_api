@@ -71,7 +71,7 @@ class FinancifyDb:
         """
         self._query(["DROP TABLE", "IF EXISTS", table])
 
-    def insert(self, table: str, columns: List[str], values: List[Tuple[Any]]):
+    def insert(self, table: str, columns: List[str], values: List[Tuple[Any]]) -> None:
         """Insert data into a db table
 
         :param table: table name
@@ -85,4 +85,30 @@ class FinancifyDb:
         val_str = f"({val_str}?)"
         _ = self._query(
             sql=["INSERT INTO", table, col_str, f"VALUES{val_str}"], parameters=values
+        )
+
+    def update_by_id(
+        self,
+        table: str,
+        target_col: str,
+        value: Union[str, float, bool],
+        ids: List[str],
+    ) -> None:
+        """Update records by ID
+
+        :param table: table name
+        :param target_col: column to edit per flagged record
+        :param ids: unique ids of target records
+        """
+        ids_str = f"({', '.join(ids)})"
+        _ = self._query(
+            sql=[
+                "UPDATE",
+                table,
+                "SET",
+                target_col,
+                f"= {value}",
+                "WHERE id IN",
+                ids_str,
+            ]
         )

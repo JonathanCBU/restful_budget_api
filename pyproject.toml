@@ -5,6 +5,9 @@ description = "A Django API for financify (winging it hard here)"
 authors = ["Jonathan Cook <jcookbme@gmail.com>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+reports_update = "financify_api.__reports_gen__:main"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 python-dotenv = "^1.0.1"
