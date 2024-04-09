@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, jsonify
 from flask import g as GlobalCtx
 import dotenv
 from financify_api.library.db_reader import FinancifyDb
@@ -11,12 +11,19 @@ app = Flask(__name__)
 
 @app.before_request
 def load_db():
-    db = FinancifyDb(os.environ["EXAMPLE_DB"])
-    GlobalCtx.db_table = db.get_table("statements", "date")
+    GlobalCtx.db = FinancifyDb(os.environ["EXAMPLE_DB"])
 
 
 @app.route("/")
-def hello_em():
-    # return "<p>Hello there Em!!! :)</p>"
+def api_map():
+    """Return list of API endpoints"""
+    return {
+        "/": "This help info",
+        "/table/statements": "statements table (use /table to find named tables)",
+    }
 
-    return render_template("example.html", db_table=GlobalCtx.db_table)
+
+@app.route("/table/statements")
+def hello_em():
+    table = GlobalCtx.db.get_table("statements", "date")
+    return jsonify(table)

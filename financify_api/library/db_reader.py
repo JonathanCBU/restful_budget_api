@@ -3,16 +3,6 @@
 import os
 import sqlite3
 from typing import List, Tuple, Any, Union
-from dataclasses import dataclass
-
-
-@dataclass
-class StatementRecord:
-    """Statement record data type"""
-
-    date: str
-    value: float
-    asset_type: str
 
 
 class FinancifyDb:
@@ -43,7 +33,11 @@ class FinancifyDb:
             response = self.cursor.execute(" ".join(sql))
         return response
 
-    def get_table(self, table: str, order: str = "") -> List[StatementRecord]:
+    def commit(self) -> None:
+        """Commit changes to DB"""
+        self.connection.commit()
+
+    def get_table(self, table: str, order: str = "") -> List[Tuple[Any]]:
         """Get all rows of a table
 
         :param table: table name
@@ -55,7 +49,40 @@ class FinancifyDb:
             ).fetchall()
         else:
             response = self._query(["SELECT * FROM", table]).fetchall()
-        return [
-            StatementRecord(date=row[0], asset_type=row[1], value=row[2])
-            for row in response
-        ]
+        return response
+
+    def make_table(
+        self, table: str, configs: List[str], overwrite: bool = False
+    ) -> None:
+        """Create a table in the DB
+
+        :param table: table name
+        :param configs: column information and other table configurations
+        :param overwrite:
+            use the 'IF NOT EXISTS' statement to keep from erroring if table already exists
+        """
+        cmd = "CREATE TABLE IF NOT EXISTS" if overwrite else "CREATE TABLE"
+        _ = self._query(sql=[cmd] + [table] + configs)
+
+    def drop_table(self, table: str) -> None:
+        """Drop a table from the db
+
+        :param table: table name
+        """
+        self._query(["DROP TABLE", "IF EXISTS", table])
+
+    def insert(self, table: str, columns: List[str], values: List[Tuple[Any]]):
+        """Insert data into a db table
+
+        :param table: table name
+        :param columns: list of table keys in the same order as each value tuple
+        :param values: list of tuples for each record (row) in key (column) order
+        """
+        col_str = f"({', '.join(columns)})"
+        val_str = ""
+        for _ in range(1, len(columns)):
+            val_str += "?, "
+        val_str = f"({val_str}?)"
+        _ = self._query(
+            sql=["INSERT INTO", table, col_str, f"VALUES{val_str}"], parameters=values
+        )
