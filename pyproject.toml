@@ -5,9 +5,16 @@ description = "A Django API for financify (winging it hard here)"
 authors = ["Jonathan Cook <jcookbme@gmail.com>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+reports_update = "financify_api.__reports_gen__:main"
+runapp = "financify_api.__app__:main"
+
 [tool.poetry.dependencies]
 python = "^3.10"
-Django = "^5.0.3"
+python-dotenv = "^1.0.1"
+flask = "^3.0.2"
+requests = "^2.31.0"
+flask-restful = "^0.3.10"
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.0.16"
@@ -24,3 +31,25 @@ ipython = "*"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+target-version = ["py310"]
+line-length = 88
+color = true
+exclude = "autogen"
+
+[tool.isort]
+py_version = 310
+line_length = 88
+profile = "black"
+color_output = true
+indent = 4
+
+[tool.mypy]
+python_version = "3.10"
+pretty = true
+show_traceback = true
+color_output = true
+ignore_missing_imports = true
+strict = true
+exclude = "archive/*"
