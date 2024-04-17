@@ -7,12 +7,14 @@ readme = "README.md"
 
 [tool.poetry.scripts]
 reports_update = "financify_api.__reports_gen__:main"
+runapp = "financify_api.__app__:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
 python-dotenv = "^1.0.1"
 flask = "^3.0.2"
 requests = "^2.31.0"
+flask-restful = "^0.3.10"
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.0.16"
