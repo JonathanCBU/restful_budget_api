@@ -44,6 +44,23 @@ def api_key_required(func: F) -> F:
     return cast(F, decorator)
 
 
+def strict_verbiage(func: F) -> F:
+    """require function names to match HTTP verbs being requested"""
+
+    @functools.wraps(func)
+    def decorator(*args: Any, **kwargs: Any) -> Union[F, Tuple[Dict[str, str], int]]:
+        print(func.__name__)
+        print(request.method)
+        if func.__name__ != request.method.lower():
+            return (
+                {"error": f"user {request.method} verb with {func.__name__} method"},
+                405,
+            )
+        return cast(F, func(*args, **kwargs))
+
+    return cast(F, decorator)
+
+
 def get_user() -> int:
     """get a user ID from an API key
 
