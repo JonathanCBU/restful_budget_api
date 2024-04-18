@@ -1,9 +1,9 @@
 """project setup endtry points"""
 
 import argparse
-
 import os
 import sqlite3
+
 import dotenv
 
 
@@ -21,9 +21,9 @@ def main() -> None:
     dotenv.load_dotenv()
     if not args.db:
         args.db = ["DEMO_DB", os.environ["DEMO_DB"]]
-    if args.db[0] not in os.environ.keys():
+    if args.db[0] not in os.environ:
         dotenv.set_key(
-            dotenv_path=env_path, key_to_set=args.db[0], value_to_set=[args.db[1]]
+            dotenv_path=env_path, key_to_set=args.db[0], value_to_set=args.db[1]
         )
     db_client = sqlite3.connect(args.db[1])
     with open(args.schema, "r", encoding="utf-8") as schema:
@@ -51,13 +51,3 @@ def get_args() -> argparse.Namespace:
     parser.add_argument("--schema", default="schema.sql", help="path to schema file")
     args = parser.parse_args()
     return args
-    # Example: setup --init_db --new_db NEW ~/home/db --schema ~/.sql
-
-
-# db_loc = os.path.join(os.path.dirname(os.path.abspath(__file__)), "example_db")
-
-# def init_db():
-#     db = get_db()
-
-#     with current_app.open_resource('schema.sql') as f:
-#         db.executescript(f.read().decode('utf8'))
