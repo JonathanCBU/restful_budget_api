@@ -34,3 +34,11 @@ CREATE TABLE IF NOT EXISTS reports (
   net_worth REAL NOT NULL,
   FOREIGN KEY(user_id) REFERENCES user(id)
 );
+
+CREATE TABLE IF NOT EXISTS patterns (
+  id INTEGER PRIMARY KEY,
+  title TEXT,
+  date TEXT,
+  value TEXT,
+  UNIQUE (title)
+)

@@ -6,8 +6,8 @@ authors = ["Jonathan Cook <jcookbme@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-reports_update = "financify_api.__reports_gen__:main"
 runapp = "financify_api.__app__:main"
+setup = "financify_api.__setup__:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
