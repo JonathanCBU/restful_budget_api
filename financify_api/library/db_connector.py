@@ -60,8 +60,13 @@ def db_fetchone(sql: str, data: Tuple[Any, ...] = tuple("")) -> Tuple[Any]:
     if not isinstance(db_client, sqlite3.Connection):
         raise LookupError("Could not connect to database")
     fetch = db_client.execute(sql, data).fetchone()
+    print("fetch", fetch)
+    print("sql", sql)
+    print("params", data)
     db_client.close()
-    return tuple(fetch)
+    if fetch:
+        return tuple(fetch)
+    return ()
 
 
 def db_fetchall(sql: str, data: Tuple[Any, ...] = tuple("")) -> List[Tuple[Any]]:
