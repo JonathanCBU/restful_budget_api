@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Tuple
 from flask_restful import Resource, reqparse
 
 from financify_api.library.db_connector import (
+    db_add_new_record,
     db_build_record,
     db_build_table,
     db_commit_change,
@@ -12,7 +13,6 @@ from financify_api.library.db_connector import (
     db_fetchone,
     db_get_schema,
     db_ids,
-    db_next_id,
 )
 from financify_api.library.security import api_key_required, get_user, strict_verbiage
 
@@ -52,18 +52,7 @@ class Statements(Resource):  # type: ignore [misc]
         user_id = get_user()
         args["user_id"] = user_id
         args["report_id"] = 0
-        record_id = db_next_id(self.table)
-        db_commit_change(
-            sql=f"INSERT INTO {self.table} "
-            f"({', '.join(args.keys())}) "
-            f"VALUES ({', '.join(['?' for _ in args])})",
-            data=tuple(args.values()),
-        )
-        fetch = db_fetchone(
-            sql=f"SELECT * FROM {self.table} WHERE id = ?",
-            data=(record_id,),
-        )
-        record = db_build_record(fetch=fetch, schema=self.schema)
+        record = db_add_new_record(table=self.table, insert=args)
         return (record, 201)
 
     @strict_verbiage
