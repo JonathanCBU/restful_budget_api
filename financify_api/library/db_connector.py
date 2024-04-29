@@ -60,13 +60,8 @@ def db_fetchone(sql: str, data: Tuple[Any, ...] = tuple("")) -> Tuple[Any]:
     if not isinstance(db_client, sqlite3.Connection):
         raise LookupError("Could not connect to database")
     fetch = db_client.execute(sql, data).fetchone()
-    print("fetch", fetch)
-    print("sql", sql)
-    print("params", data)
     db_client.close()
-    if fetch:
-        return tuple(fetch)
-    return ()
+    return tuple(fetch)
 
 
 def db_fetchall(sql: str, data: Tuple[Any, ...] = tuple("")) -> List[Tuple[Any]]:
@@ -120,3 +115,23 @@ def db_ids(table: str) -> List[int]:
     """
     fetch = db_fetchall(f"SELECT id FROM {table}")
     return [int(record[0]) for record in fetch]
+
+
+def db_add_new_record(table: str, insert: Dict[str, Any]) -> Dict[str, Any]:
+    """create a new record based on table schema and json from request
+
+    :param table: table name
+    :param insert:
+    """
+    record_id = db_next_id(table)
+    db_commit_change(
+        sql=f"INSERT INTO {table} "
+        f"({', '.join(insert.keys())}) "
+        f"VALUES ({', '.join(['?' for _ in insert])})",
+        data=tuple(insert.values()),
+    )
+    fetch = db_fetchone(
+        sql=f"SELECT * FROM {table} WHERE id = ?",
+        data=(record_id,),
+    )
+    return db_build_record(fetch=fetch, schema=list(insert.keys()))
