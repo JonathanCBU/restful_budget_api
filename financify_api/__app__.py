@@ -11,6 +11,7 @@ from flask_restful import Api
 from financify_api.resources.patterns import Patterns, PatternsById, PatternsByTitle
 from financify_api.resources.statements import Assets, Liabilities
 from financify_api.resources.users import Users
+from financify_api.resources.utilities import Home, Shutdown
 
 
 def main() -> None:
@@ -18,10 +19,9 @@ def main() -> None:
     dotenv.load_dotenv()
 
     args = get_args()
-    args_dict = {"admin": args.admin, "database": os.environ["DEMO_DB"]}
+    args_dict = {"admin": args.admin, "database": args.db}
     app = create_app(args_dict)
-    api = create_api(app)
-    print(api.resources)
+    _ = create_api(app)
     app.run(debug=args.debug)
 
 
@@ -48,7 +48,8 @@ def create_api(app: Flask) -> Api:
     api.add_resource(Patterns, "/patterns", "/patterns/")
     api.add_resource(PatternsByTitle, "/patterns/byTitle/<string:title>")
     api.add_resource(PatternsById, "/patterns/byId/<int:id_num>")
-
+    api.add_resource(Home, "/home")
+    api.add_resource(Shutdown, "/shutdown")
     return api
 
 
@@ -66,6 +67,6 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--admin", action="store_true", default=False, help="Run app as admin"
     )
-
+    parser.add_argument("--db", default=os.environ["DEMO_DB"], help="Select DB file")
     args = parser.parse_args()
     return args
