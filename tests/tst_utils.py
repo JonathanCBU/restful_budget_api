@@ -34,7 +34,6 @@ def admin_server() -> Iterator[Union[Process, str]]:
     app_process.start()
     yield app_process
     app_process.terminate()
-    return "Process terminated"
 
 
 @pytest.fixture
@@ -51,7 +50,6 @@ def tmp_db() -> Iterator[Union[sqlite3.Connection, str]]:
     db_client.close()
     yield db_file
     os.remove(db_file)
-    return f"{db_file} removed and client closed"
 
 
 @pytest.fixture

@@ -31,7 +31,6 @@ def create_app(args: Dict[str, Any]) -> Flask:
     :param args: application setup args
     """
     app = Flask(__name__)
-    print(os.environ["DEMO_DB"])
     app.config.from_mapping(DATABASE=args["database"], IS_ADMIN=args["admin"])
     return app
 

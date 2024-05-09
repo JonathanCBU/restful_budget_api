@@ -1,8 +1,10 @@
 """test the home endpoint"""
 
-from tst_utils import dummy_users
+from tst_utils import admin_server
+import requests
 
-
-def test_home(dummy_users, simple):
+def test_home(admin_server):
     """test home endpoint"""
-    print(dummy_users)
+    resp = requests.get("http://127.0.0.1:5000/home")
+    assert resp.status_code == 200
+    assert resp.json() == {"hello": "world"}
