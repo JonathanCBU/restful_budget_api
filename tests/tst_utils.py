@@ -2,13 +2,13 @@
 
 import os
 import sqlite3
-from typing import Dict, List, Union, Iterator
+from multiprocessing import Process
+from typing import Dict, Iterator, List, Union
 
 import pytest
 
-from multiprocessing import Process
-
 from financify_api.__app__ import create_api, create_app
+
 """
 TODO: Use Yield fixtures
 
@@ -18,10 +18,16 @@ Notes:
     3. At the end of testing Pytest goes backwards through yield fixtures and runs the code that comes after their yields
 """
 
+
 @pytest.fixture
 def admin_server() -> Iterator[Union[Process, str]]:
     """launch admin server with user creation perms"""
-    args = {"admin": True, "database": os.path.join(os.path.dirname(__file__), "../financify_api/schema.sql")}
+    args = {
+        "admin": True,
+        "database": os.path.join(
+            os.path.dirname(__file__), "../financify_api/schema.sql"
+        ),
+    }
     app = create_app(args)
     api = create_api(app)
     app_process = Process(target=app.run, kwargs={"debug": False})

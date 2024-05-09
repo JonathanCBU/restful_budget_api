@@ -1,6 +1,6 @@
 """test the home endpoint"""
 
-from tests.utilities import dummy_users
+from tst_utils import dummy_users
 
 
 def test_home(dummy_users, simple):
