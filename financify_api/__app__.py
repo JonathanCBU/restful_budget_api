@@ -11,7 +11,7 @@ from flask_restful import Api
 from financify_api.resources.patterns import Patterns, PatternsById, PatternsByTitle
 from financify_api.resources.statements import Assets, Liabilities
 from financify_api.resources.users import Users
-from financify_api.resources.utilities import Home, Shutdown
+from financify_api.resources.utilities import Home
 
 
 def main() -> None:
@@ -49,7 +49,6 @@ def create_api(app: Flask) -> Api:
     api.add_resource(PatternsByTitle, "/patterns/byTitle/<string:title>")
     api.add_resource(PatternsById, "/patterns/byId/<int:id_num>")
     api.add_resource(Home, "/home")
-    api.add_resource(Shutdown, "/shutdown")
     return api
 
 
