@@ -9,7 +9,14 @@ import pytest
 from multiprocessing import Process
 
 from financify_api.__app__ import create_api, create_app
+"""
+TODO: Use Yield fixtures
 
+Notes:
+    1. Yield fixtures can only have one yield
+    2. Yield should return an object needed for testing
+    3. At the end of testing Pytest goes backwards through yield fixtures and runs the code that comes after their yields
+"""
 
 @pytest.fixture
 def admin_server() -> Iterator[Union[Process, str]]:
@@ -23,10 +30,6 @@ def admin_server() -> Iterator[Union[Process, str]]:
     app_process.terminate()
     return "Process terminated"
 
-@pytest.fixture
-def simple():
-    yield 1
-    return {"I": "Done"} 
 
 @pytest.fixture
 def tmp_db() -> Iterator[Union[sqlite3.Connection, str]]:
