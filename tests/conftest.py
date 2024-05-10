@@ -1,55 +1,41 @@
 """config functions for unit tests"""
 
 import os
-import sqlite3
 from multiprocessing import Process
 from typing import Dict, Iterator, List, Union
 
 import pytest
 
 from financify_api.__app__ import create_api, create_app
-
-"""
-TODO: Use Yield fixtures
-
-Notes:
-    1. Yield fixtures can only have one yield
-    2. Yield should return an object needed for testing
-    3. At the end of testing Pytest goes backwards through yield fixtures and runs the code that comes after their yields
-"""
+from tests.library.db_setup import make_db
 
 
 @pytest.fixture
-def admin_server() -> Iterator[Union[Process, str]]:
+def admin_access_app(request) -> Iterator[Union[Process, str]]:
     """launch admin server with user creation perms"""
-    args = {
-        "admin": True,
-        "database": os.path.join(
-            os.path.dirname(__file__), "../financify_api/schema.sql"
-        ),
-    }
+    test_db = make_db(request.param, "admin_tester")
+    args = {"admin": True, "database": test_db}
     app = create_app(args)
-    api = create_api(app)
+    _ = create_api(app)
     app_process = Process(target=app.run, kwargs={"debug": False})
     app_process.start()
     yield app_process
     app_process.terminate()
+    os.remove(test_db)
 
 
 @pytest.fixture
-def tmp_db() -> Iterator[Union[sqlite3.Connection, str]]:
-    """create test db file and return path name"""
-    db_file = os.path.join(os.path.dirname(__file__), "temp_db.db")
-    if os.path.exists(db_file):
-        print("DB file already exists, removing...")
-        os.remove(db_file)
-    db_client = sqlite3.connect(db_file)
-    schema_file = os.path.join(os.path.dirname(__file__), "../financify_api/schema.sql")
-    with open(schema_file, "r", encoding="utf-8") as schema:
-        db_client.executescript(schema.read())
-    db_client.close()
-    yield db_file
-    os.remove(db_file)
+def base_access_app(request) -> Iterator[Union[Process, str]]:
+    """launch admin server with user creation perms"""
+    test_db = make_db(request.param, "base_tester")
+    args = {"admin": False, "database": test_db}
+    app = create_app(args)
+    _ = create_api(app)
+    app_process = Process(target=app.run, kwargs={"debug": False})
+    app_process.start()
+    yield app_process
+    app_process.terminate()
+    os.remove(test_db)
 
 
 @pytest.fixture
