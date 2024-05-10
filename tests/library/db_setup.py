@@ -12,7 +12,9 @@ def make_db(schema_file: str, db_name: str) -> str:
     """
     db_file = os.path.join(os.path.dirname(__file__), f"../{db_name}.db")
     db_client = sqlite3.connect(db_file)
-    schema_file = os.path.join(os.path.dirname(__file__), f"../schemas/{schema_file}.sql")
+    schema_file = os.path.join(
+        os.path.dirname(__file__), f"../schemas/{schema_file}.sql"
+    )
     with open(schema_file, "r", encoding="utf-8") as schema:
         db_client.executescript(schema.read())
     db_client.close()

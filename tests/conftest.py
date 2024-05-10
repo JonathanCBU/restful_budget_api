@@ -11,7 +11,7 @@ from tests.library.db_setup import make_db
 
 
 @pytest.fixture
-def admin_access_app(request) -> Iterator[Union[Process, str]]:
+def admin_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, str]]:
     """launch admin server with user creation perms"""
     test_db = make_db(request.param, "admin_tester")
     args = {"admin": True, "database": test_db}
@@ -25,7 +25,7 @@ def admin_access_app(request) -> Iterator[Union[Process, str]]:
 
 
 @pytest.fixture
-def base_access_app(request) -> Iterator[Union[Process, str]]:
+def base_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, str]]:
     """launch admin server with user creation perms"""
     test_db = make_db(request.param, "base_tester")
     args = {"admin": False, "database": test_db}
