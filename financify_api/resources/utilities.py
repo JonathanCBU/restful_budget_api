@@ -5,7 +5,6 @@ from typing import Any, Dict, Tuple
 from flask_restful import Resource
 
 
-
 class Home(Resource):  # type: ignore [misc]
     """home resource for testing"""
 
