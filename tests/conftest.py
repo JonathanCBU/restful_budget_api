@@ -9,8 +9,6 @@ import pytest
 from financify_api.__app__ import create_api, create_app
 from tests.library.db_setup import make_db
 
-pytest.global_url = "http://127.0.0.1:5000"
-pytest.global_headers = {"Content-Type": "application/json"}
 
 @pytest.fixture
 def admin_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, str]]:
