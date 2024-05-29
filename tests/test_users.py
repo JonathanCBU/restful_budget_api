@@ -14,7 +14,6 @@ import tests.library.test_globals as test_globals
 @pytest.mark.parametrize("admin_access_app", ["users_schema"], indirect=True)
 def test_user_access(admin_access_app: Process, dummy_users: List[str]) -> None:
     """App allows read/write access to user info when in admin mode"""
-    breakpoint()
     empty_resp = requests.get(f"{test_globals.url}/users", timeout=5)
     assert empty_resp.status_code == 200
     assert empty_resp.json()[0] == {"id": 1, "username": "tester_1", "password": "pwd1"}

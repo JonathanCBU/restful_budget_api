@@ -1,7 +1,7 @@
 """API DB connection functions"""
 
 import sqlite3
-from typing import Any, Dict, List, Tuple, cast, Union
+from typing import Any, Dict, List, Tuple, Union, cast
 
 from flask import current_app
 

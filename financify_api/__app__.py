@@ -9,7 +9,7 @@ from flask import Flask
 from flask_restful import Api
 
 from financify_api.resources.patterns import Patterns, PatternsById, PatternsByTitle
-from financify_api.resources.statements import Assets, Liabilities
+from financify_api.resources.statements import Assets, Liabilities, Reports
 from financify_api.resources.users import Users
 from financify_api.resources.utilities import Home
 
@@ -43,6 +43,7 @@ def create_api(app: Flask) -> Api:
     api = Api(app)
     api.add_resource(Assets, "/assets", "/assets/<int:record_id>")
     api.add_resource(Liabilities, "/liabilities", "/liabilities/<int:record_id>")
+    api.add_resource(Reports, "/reports", "/reports/<int:record_id>")
     api.add_resource(Users, "/users", "/users/<int:user_id>")
     api.add_resource(Patterns, "/patterns", "/patterns/")
     api.add_resource(PatternsByTitle, "/patterns/byTitle/<string:title>")

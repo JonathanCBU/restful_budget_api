@@ -20,14 +20,11 @@ from financify_api.library.security import api_key_required, get_user, strict_ve
 class Statements(Resource):  # type: ignore [misc]
     """assets and liabilities table resource"""
 
-    def __init__(self, table: str) -> None:
+    def __init__(self, table: str, parser: reqparse.RequestParser) -> None:
         super().__init__()
+        self.parser = parser
         self.table = table
         self.schema = db_get_schema(self.table)
-        self.parser = reqparse.RequestParser()
-        self.parser.add_argument("date", type=str)
-        self.parser.add_argument("description", type=str)
-        self.parser.add_argument("value", type=float)
 
     @strict_verbiage
     @api_key_required
@@ -51,7 +48,6 @@ class Statements(Resource):  # type: ignore [misc]
                 return ({"error": f"field {field} not provided"}, 400)
         user_id = get_user()
         args["user_id"] = user_id
-        args["report_id"] = 0
         record = db_add_new_record(table=self.table, insert=args)
         return (record, 201)
 
@@ -79,16 +75,36 @@ class Statements(Resource):  # type: ignore [misc]
         )
         return ({"table": self.table, "deleted_id": record_id}, 200)
 
+    # TODO: Add an update method for changing statement report id number
+
 
 class Liabilities(Statements):
     """Liabilities instance of statements"""
 
     def __init__(self) -> None:
-        super().__init__(table="liabilities")
+        parser = reqparse.RequestParser()
+        parser.add_argument("date", type=str)
+        parser.add_argument("description", type=str)
+        parser.add_argument("value", type=float)
+        super().__init__(table="liabilities", parser=parser)
 
 
 class Assets(Statements):
     """Assets instance of statements"""
 
     def __init__(self) -> None:
-        super().__init__(table="assets")
+        parser = reqparse.RequestParser()
+        parser.add_argument("date", type=str)
+        parser.add_argument("description", type=str)
+        parser.add_argument("value", type=float)
+        super().__init__(table="assets", parser=parser)
+
+
+class Reports(Statements):
+    """Reports table resource"""
+
+    def __init__(self) -> None:
+        parser = reqparse.RequestParser()
+        parser.add_argument("date", type=str)
+        parser.add_argument("net_worth", type=str)
+        super().__init__(table="reports", parser=parser)
