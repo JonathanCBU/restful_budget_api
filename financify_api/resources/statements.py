@@ -17,7 +17,7 @@ from financify_api.library.db_connector import (
 from financify_api.library.security import api_key_required, get_user, strict_verbiage
 
 
-class Statements(Resource):  # type: ignore [misc]
+class KeyRestricted(Resource):  # type: ignore [misc]
     """assets and liabilities table resource"""
 
     def __init__(self, table: str, parser: reqparse.RequestParser) -> None:
@@ -78,29 +78,32 @@ class Statements(Resource):  # type: ignore [misc]
     # TODO: Add an update method for changing statement report id number
 
 
-class Liabilities(Statements):
-    """Liabilities instance of statements"""
+class Statements(KeyRestricted):
+    """Financial Statements parent resource"""
 
-    def __init__(self) -> None:
+    def __init__(self, table: str) -> None:
         parser = reqparse.RequestParser()
         parser.add_argument("date", type=str)
         parser.add_argument("description", type=str)
         parser.add_argument("value", type=float)
-        super().__init__(table="liabilities", parser=parser)
+        super().__init__(table=table, parser=parser)
+
+
+class Liabilities(Statements):
+    """Liabilities instance of statements"""
+
+    def __init__(self) -> None:
+        super().__init__(table="liabilities")
 
 
 class Assets(Statements):
     """Assets instance of statements"""
 
     def __init__(self) -> None:
-        parser = reqparse.RequestParser()
-        parser.add_argument("date", type=str)
-        parser.add_argument("description", type=str)
-        parser.add_argument("value", type=float)
-        super().__init__(table="assets", parser=parser)
+        super().__init__(table="assets")
 
 
-class Reports(Statements):
+class Reports(KeyRestricted):
     """Reports table resource"""
 
     def __init__(self) -> None:

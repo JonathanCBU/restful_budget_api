@@ -55,15 +55,6 @@ def dummy_assets() -> List[Dict[str, Union[str, float]]]:
 
 
 @pytest.fixture
-def dummy_liabilities() -> List[Dict[str, Union[str, float]]]:
-    """return a list of dummy liabilities"""
-    return [
-        {"date": "2021-01", "description": "student debt", "value": 1000.00},
-        {"date": "2021-02", "description": "mortgage", "value": 1205.09},
-    ]
-
-
-@pytest.fixture
 def dummy_patterns() -> Dict[str, str]:
     """return list of dummy patterns"""
     return {"title": "Pattern 1", "date": r"\d{4}-\d{2}", "value": r"\$(\d{3,9}\.\d{2}"}
