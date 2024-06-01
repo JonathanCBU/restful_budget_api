@@ -13,9 +13,9 @@ from tests.library import test_globals
 
 
 @pytest.mark.parametrize("base_access_app", ["users_schema"], indirect=True)
-def test_asset_post_and_get(
+def test_post_and_get(
     base_access_app: Process, dummy_assets: List[Dict[str, Union[str, float]]]
-):
+) -> None:
     """Assets endpoint should be able to add assets when passing a valid api key"""
     # verify posting assets
     for asset in dummy_assets:
@@ -60,3 +60,12 @@ def test_asset_post_and_get(
     )
     assert resp.status_code == 401
     assert resp.json() == {"error": "API key not valid"}
+
+    
+@pytest.mark.parametrize("base_access_app", ["users_schema"], indirect=True)
+def test_patch_and_delete(
+    base_access_app: Process, dummy_assets: List[Dict[str, Union[str, float]]]
+) -> None:
+    """Should be able to delete and patch asset and liability records"""
+
+

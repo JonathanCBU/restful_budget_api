@@ -26,6 +26,32 @@ class KeyRestricted(Resource):  # type: ignore [misc]
         self.table = table
         self.schema = db_get_schema(self.table)
 
+    def verify_record_id(self, record_id: int) -> bool:
+        """verify entered record id is valid
+
+        :param record_id: id number of record
+        """
+        valid_ids = db_ids(self.table)
+        if record_id not in valid_ids:
+            return False
+        return True 
+
+    def verify_user_ownership(self, record_id: int) -> bool:
+        """verify user created or otherwise owns record being edited
+
+        :param record_id: id number of record
+        """
+        record = db_build_record(
+            fetch=db_fetchone(
+                sql=f"SELECT * FROM {self.table} WHERE id = ?", data=(record_id,)
+            ),
+            schema=self.schema,
+        )
+        if get_user() != record["user_id"]:
+            return False
+        return True
+        
+
     @strict_verbiage
     @api_key_required
     def get(self) -> Tuple[List[Dict[str, Any]], int]:
@@ -58,6 +84,23 @@ class KeyRestricted(Resource):  # type: ignore [misc]
 
         :param record_id: id number of record to delete
         """
+        if not self.verify_record_id(record_id):
+            return ({"error": f"{self.table} id invalid"}, 400)
+        if not self.verify_user_ownership(record_id):
+            return ({"error": f"no access to {self.table} id {record_id}"}, 403)
+        db_commit_change(
+            sql=f"DELETE FROM {self.table} WHERE id = ?", data=(record_id,)
+        )
+        return ({"table": self.table, "deleted_id": record_id}, 200)
+
+    # TODO: Add an update method for changing statement report id number
+    @strict_verbiage
+    @api_key_required
+    def patch(self, record_id: int = 0) -> Tuple[Dict[str, Any], int]:
+        """Update report ID key for assets and liabilities
+
+        :param record_id: id number of record to change
+        """
         valid_ids = db_ids(self.table)
         if record_id not in valid_ids:
             return ({"error": f"{self.table} id invalid"}, 400)
@@ -68,15 +111,8 @@ class KeyRestricted(Resource):  # type: ignore [misc]
             ),
             schema=self.schema,
         )
-        if user_id != record["user_id"]:
-            return ({"error": f"no access to {self.table} id {record_id}"}, 403)
-        db_commit_change(
-            sql=f"DELETE FROM {self.table} WHERE id = ?", data=(record_id,)
-        )
-        return ({"table": self.table, "deleted_id": record_id}, 200)
-
-    # TODO: Add an update method for changing statement report id number
-
+         
+        
 
 class Statements(KeyRestricted):
     """Financial Statements parent resource"""
