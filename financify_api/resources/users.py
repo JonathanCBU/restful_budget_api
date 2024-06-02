@@ -74,3 +74,11 @@ class Users(Resource):  # type: ignore [misc]
             return ({"error": f"{self.table} id invalid"}, 400)
         db_commit_change(sql=f"DELETE FROM {self.table} WHERE id = ?", data=(user_id,))
         return ({"table": self.table, "deleted_id": user_id}, 200)
+
+
+
+
+
+
+
+
