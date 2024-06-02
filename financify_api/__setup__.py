@@ -26,7 +26,9 @@ def main() -> None:
             dotenv_path=env_path, key_to_set=args.db[0], value_to_set=args.db[1]
         )
     db_client = sqlite3.connect(args.db[1])
-    with open(args.schema, "r", encoding="utf-8") as schema:
+    with open(
+        os.path.join(os.path.dirname(__file__), args.schema), "r", encoding="utf-8"
+    ) as schema:
         db_client.executescript(schema.read())
     db_client.close()
 

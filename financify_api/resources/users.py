@@ -4,7 +4,7 @@ import uuid
 from sqlite3 import IntegrityError
 from typing import Any, Dict, List, Tuple, Union
 
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, request
 
 from financify_api.library.db_connector import (
     db_build_record,
@@ -46,6 +46,7 @@ class Users(Resource):  # type: ignore [misc]
     def post(self) -> Tuple[Dict[str, Any], int]:
         """create a new user and return the user API key"""
         args = self.parser.parse_args()
+        print(request.json)
         if not args["username"]:
             return ({"error": "no username provided"}, 400)
         try:
@@ -73,3 +74,11 @@ class Users(Resource):  # type: ignore [misc]
             return ({"error": f"{self.table} id invalid"}, 400)
         db_commit_change(sql=f"DELETE FROM {self.table} WHERE id = ?", data=(user_id,))
         return ({"table": self.table, "deleted_id": user_id}, 200)
+
+
+
+
+
+
+
+

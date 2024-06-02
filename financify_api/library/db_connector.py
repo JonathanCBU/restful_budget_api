@@ -1,7 +1,7 @@
 """API DB connection functions"""
 
 import sqlite3
-from typing import Any, Dict, List, Tuple, cast
+from typing import Any, Dict, List, Tuple, Union, cast
 
 from flask import current_app
 
@@ -48,7 +48,7 @@ def db_build_table(fetch: List[Tuple[Any]], schema: List[str]) -> List[Dict[str,
     return records
 
 
-def db_fetchone(sql: str, data: Tuple[Any, ...] = tuple("")) -> Tuple[Any]:
+def db_fetchone(sql: str, data: Tuple[Any, ...] = tuple("")) -> Union[Tuple[Any], None]:
     """get single record response from database
 
     :param sql: formatted SQL statement
@@ -61,6 +61,8 @@ def db_fetchone(sql: str, data: Tuple[Any, ...] = tuple("")) -> Tuple[Any]:
         raise LookupError("Could not connect to database")
     fetch = db_client.execute(sql, data).fetchone()
     db_client.close()
+    if fetch is None:
+        return None
     return tuple(fetch)
 
 
@@ -102,7 +104,7 @@ def db_next_id(table: str) -> int:
     :param table: table name
     """
     fetch = db_fetchone(f"SELECT * FROM SQLITE_SEQUENCE WHERE name='{table}'")
-    if len(fetch) == 2:
+    if fetch is not None:
         fetch = cast(Tuple[str, int], fetch)
         return int(fetch[1] + 1)
     return 1
