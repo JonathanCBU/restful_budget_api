@@ -22,7 +22,7 @@ def admin_required(func: F) -> F:
 
     return cast(F, decorator)
 
-
+# TODO: change this to use the Authorization HTTP header 
 def api_key_required(func: F) -> F:
     """require api_key passed with request json"""
 
