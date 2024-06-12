@@ -67,7 +67,7 @@ def get_args() -> argparse.Namespace:
         "--admin", action="store_true", default=False, help="Run app as admin"
     )
     parser.add_argument("--db", default=os.environ["DEMO_DB"], help="Select DB file")
-    parser.add_argument("--host", default=None, help="Specify server host (risky as hell please don't")
+    parser.add_argument("--host", default=None, help="Specify server host. Will default to localhost if left None)
     parser.add_argument("--port", default=None, help="Specify server port")
     args = parser.parse_args()
     return args
