@@ -28,15 +28,16 @@ def api_key_required(func: F) -> F:
 
     @functools.wraps(func)
     def decorator(*args: Any, **kwargs: Any) -> Union[F, Tuple[Dict[str, str], int]]:
-        if not request.json.get("api_key"):
+        if not request.headers.get("Authorization"):
             return (
-                {"error": "Please provide an API key in the json of your request"},
+                {"error": "Please provide an API key in the Authorization header of your request"}, 
                 400,
             )
-        user_key = request.json.get("api_key")
+        user_key = request.headers.get("Authorization")
         api_keys = [
             api_key[0] for api_key in db_fetchall(sql="SELECT password FROM users")
         ]
+        print(api_keys)
         if user_key not in api_keys:
             return ({"error": "API key not valid"}, 401)
         return cast(F, func(*args, **kwargs))
@@ -67,6 +68,6 @@ def get_user() -> int:
     :param api_key: user's api key
     """
     user_id = db_fetchone(
-        "SELECT id FROM users WHERE password = ?", (request.json["api_key"],)
+        "SELECT id FROM users WHERE password = ?", (request.headers["Authorization"],)
     )
     return int(user_id[0])
