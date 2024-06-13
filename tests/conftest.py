@@ -22,7 +22,7 @@ def admin_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, 
     yield app_process
     app_process.terminate()
     os.remove(test_db)
-    time.sleep(3)
+    time.sleep(0.5)
 
 @pytest.fixture
 def base_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, str]]:
@@ -36,7 +36,7 @@ def base_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, s
     yield app_process
     app_process.terminate()
     os.remove(test_db)
-    time.sleep(3)
+    time.sleep(0.5)
 
 @pytest.fixture
 def dummy_users() -> List[str]:
