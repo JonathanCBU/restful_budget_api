@@ -24,7 +24,7 @@ def test_user_success(admin_access_app: Process, dummy_users: List[str]) -> None
         resp = requests.post(
             f"{test_globals.DEFAULT_URL}/users",
             data=json.dumps({"username": user}),
-            headers=test_globals.HEADERS,
+            headers={"Content-Type": "application/json"},
             timeout=5,
         )
         assert resp.status_code == 201
@@ -42,12 +42,12 @@ def test_user_errors(admin_access_app: Process, dummy_users: List[str]) -> None:
     """Test failure states of users resource"""
     # verify post failures
     user_info = {"not_a_username": "Qwerty"}
-    resp = requests.post(f"{test_globals.DEFAULT_URL}/users", timeout=5, data=json.dumps(user_info), headers=test_globals.HEADERS)
+    resp = requests.post(f"{test_globals.DEFAULT_URL}/users", timeout=5, data=json.dumps(user_info), headers={"Content-Type": "application/json"})
     assert resp.status_code == 400
     assert resp.json()["error"] == "no username provided"
      
     user_info = {"username": "tester_1"}
-    resp = requests.post(f"{test_globals.DEFAULT_URL}/users", timeout=5, data=json.dumps(user_info), headers=test_globals.HEADERS)
+    resp = requests.post(f"{test_globals.DEFAULT_URL}/users", timeout=5, data=json.dumps(user_info), headers={"Content-Type": "application/json"})
     assert resp.status_code == 409
     assert resp.json()["error"] == "username already taken"
 
@@ -65,8 +65,7 @@ def test_user_restriction(base_access_app: Process) -> None:
     assert resp.status_code == 403
     assets = requests.get(
         f"{test_globals.DEFAULT_URL}/assets",
-        data=json.dumps({"api_key": "pwd1"}),
-        headers=test_globals.HEADERS,
+        headers={"Authorization": "pwd1"},
         timeout=5,
     )
     assert assets.status_code == 200
