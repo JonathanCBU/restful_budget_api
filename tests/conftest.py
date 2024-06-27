@@ -1,6 +1,7 @@
 """config functions for unit tests"""
 
 import os
+import time
 from multiprocessing import Process
 from typing import Dict, Iterator, List, Union
 
@@ -8,7 +9,7 @@ import pytest
 
 from financify_api.__app__ import create_api, create_app
 from tests.library.db_setup import make_db
-import time
+
 
 @pytest.fixture
 def admin_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, str]]:
@@ -24,6 +25,7 @@ def admin_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, 
     os.remove(test_db)
     time.sleep(0.5)
 
+
 @pytest.fixture
 def base_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, str]]:
     """launch admin server with user creation perms"""
@@ -37,6 +39,7 @@ def base_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, s
     app_process.terminate()
     os.remove(test_db)
     time.sleep(0.5)
+
 
 @pytest.fixture
 def dummy_users() -> List[str]:

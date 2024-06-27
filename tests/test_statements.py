@@ -41,8 +41,9 @@ def test_asset_resource_success(
     resp = requests.get(
         f"{test_globals.DEFAULT_URL}/assets",
         headers={"Authorization": "pwd2"},
-        timeout=5,) 
-    assert resp.json() == [] # verify patch to update asset report_id
+        timeout=5,
+    )
+    assert resp.json() == []  # verify patch to update asset report_id
     get_payload = {"report_id": 2}
     resp = requests.patch(
         f"{test_globals.DEFAULT_URL}/assets/1",
@@ -72,6 +73,7 @@ def test_asset_resource_success(
     )
     assert len(assets.json()) == len(dummy_assets) - 1
     assert assets.json()[0]["id"] == 2
+
 
 @pytest.mark.parametrize("base_access_app", ["users_schema"], indirect=True)
 def test_asset_resource_errors(
@@ -172,4 +174,3 @@ def test_asset_resource_errors(
     )
     assert resp.status_code == 400
     assert resp.json()["error"] == "field report_id not provided"
-

@@ -18,20 +18,38 @@ I started this project as a way to learn the basics of REST APIs and fullstack c
 1. Install using Poetry
     - From the root directory run `poetry install`
 2. Run setup entry point to configure .env and .db
-    `poetry run setup --init_env`
+    `poetry run setup`
 3. Run unit tests to make sure everything runs correctly
     `poetry run pytest`
+
+## Running the flask server
+
+1. Start the server in admin mode
+  - `poetry run runapp --admin --debug`
+  - The admin flag starts the server in the only mode that will allow it to read/write the users table
+2. In a separate terminal, create a User and save the API key
+  - `curl http://localhost:5000/users -v -d '{"username":"user1"}' -H "Content-Type: application/json" -X POST`
+  - Will return a JSON with a password field. That's your API key so copy it somewhere for later use
+3. Go ahead and stop the current flask server instance with Ctrl-C and restart without the admin flag
+  - `poetry runapp --debug`
+4. Optional, check that you can't create another user account when the server is not in admin mode
+  - `curl http://localhost:5000/users -v -d '{"username":"user2"}' -H "Content-Type: application/json" -X POST`
+5. Add some records to the db
+  - `curl http://localhost:5000/assets -v -d '{"date":"2024-01", "description":"bank", "value":"10101.97"}' -H "Content-Type: application/json" -H "Authorization: my_key" -X POST`
+  - `curl http://localhost:5000/assets -v -d '{"date":"2024-02", "description":"one starry share", "value":"0.097"}' -H "Content-Type: application/json" -H "Authorization: my_key" -X POST`
+6. Read back the assets for user1
+  - `curl http://localhost:5000/assets -v -H "Authorization: my_key" -X GET`
 
 ## Explanation of This Project
 
 ### Motivation
 
-- I have used Python to request resources from REST APIs at three jobs now, but I didn't fully understand what a REST API actually is.
+- I have used Python to request resources from REST APIs at three jobs now, but it took this project for me to fully understand what a REST API is.
 - I have not directly used relational databases or query languages at past jobs so using sqlite was a solid introduction.
 - This project (and hopefully others like it) are great ways for me to keep practicing writing code while in between jobs or in positions where I never have to write code.
 - I love learning new things, and I find that having a tangible goal often helps me focus while working on projects. My goal with this project is to make an example of how a RESTful backend could operate for a simple web tool.
 
-### Reasons Behing the Tech Stack
+### Reasons Behind the Tech Stack
 
 - Python is my strongest language so I knew the fastest way for me to learn REST would be via Python
 - Django can whip up a simple web page very fast, but flask (and also flask_restful) are perfect for just crafting some endpoints 

@@ -22,7 +22,7 @@ def admin_required(func: F) -> F:
 
     return cast(F, decorator)
 
-# TODO: change this to use the Authorization HTTP header 
+
 def api_key_required(func: F) -> F:
     """require api_key passed with request json"""
 
@@ -30,7 +30,9 @@ def api_key_required(func: F) -> F:
     def decorator(*args: Any, **kwargs: Any) -> Union[F, Tuple[Dict[str, str], int]]:
         if not request.headers.get("Authorization"):
             return (
-                {"error": "Please provide an API key in the Authorization header of your request"}, 
+                {
+                    "error": "Please provide an API key in the Authorization header of your request"
+                },
                 400,
             )
         user_key = request.headers.get("Authorization")
