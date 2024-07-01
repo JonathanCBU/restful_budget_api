@@ -10,17 +10,19 @@ I started this project as a way to learn the basics of REST APIs and fullstack c
 
 1. Linux
     - I simply don't want to worry about how this works on a Windows environment, feel free to sort through the muck on your own though
-2. Python Poetry
+2. Python Poetry (Version 1.2.0 or later)
     - Follow [these instructions](https://python-poetry.org/docs/#installing-with-the-official-installer) to install using the official Poetry installer
 
 ### Installation
 
-1. Install using Poetry
+1. Navigate to the root directory of the repo before running any Poetry commands (when I say root directory I mean the root of this cloned repo)
+2. Install using Poetry
     - From the root directory run `poetry install`
-2. Run setup entry point to configure .env and .db
-    `poetry run setup`
-3. Run unit tests to make sure everything runs correctly
-    `poetry run pytest`
+3. Run setup entry point to configure .env and .db
+    - `poetry run setup`
+4. Run unit tests to make sure everything runs correctly
+    - `poetry run pytest
+    - Note: I am still working out a `Max retries exceeded with url: ` error that shows up sometimes. If that happens move on to the next section.
 
 ## Running the flask server
 
