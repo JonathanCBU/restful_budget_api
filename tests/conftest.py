@@ -20,6 +20,7 @@ def admin_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, 
     _ = create_api(app)
     app_process = Process(target=app.run, kwargs={"debug": False})
     app_process.start()
+    time.sleep(0.5)
     yield app_process
     app_process.terminate()
     os.remove(test_db)
@@ -35,6 +36,7 @@ def base_access_app(request: pytest.FixtureRequest) -> Iterator[Union[Process, s
     _ = create_api(app)
     app_process = Process(target=app.run, kwargs={"debug": False})
     app_process.start()
+    time.sleep(0.5)
     yield app_process
     app_process.terminate()
     os.remove(test_db)
