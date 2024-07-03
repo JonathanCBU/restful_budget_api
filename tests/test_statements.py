@@ -26,6 +26,10 @@ def test_asset_resource_success(
             timeout=5,
         )
         assert resp.status_code == 201
+        resp_json = resp.json()
+        assert resp_json["date"] == asset["date"]
+        assert resp_json["description"] == asset["description"]
+        assert resp_json["value"] == asset["value"]
     resp = requests.get(
         f"{test_globals.DEFAULT_URL}/assets",
         headers={"Authorization": "pwd1"},
@@ -37,13 +41,22 @@ def test_asset_resource_success(
     assert isinstance(resp.json(), list)
     assert len(resp.json()) == len(dummy_assets)
 
+    # verify exact contents of first record
+    record_0 = resp.json()[0]
+    assert record_0["date"] == dummy_assets[0]["date"]
+    assert record_0["description"] == dummy_assets[0]["description"]
+    assert record_0["value"] == dummy_assets[0]["value"]
+    assert record_0["id"] == 1
+
     # verify limiting responses to user requesting assets
     resp = requests.get(
         f"{test_globals.DEFAULT_URL}/assets",
         headers={"Authorization": "pwd2"},
         timeout=5,
     )
-    assert resp.json() == []  # verify patch to update asset report_id
+    assert resp.json() == []  
+
+    # verify patch to update asset report_id
     get_payload = {"report_id": 2}
     resp = requests.patch(
         f"{test_globals.DEFAULT_URL}/assets/1",
@@ -57,7 +70,12 @@ def test_asset_resource_success(
         headers={"Authorization": "pwd1"},
         timeout=5,
     )
-    assert assets.json()[0]["report_id"] == 2
+    record_0 = assets.json()[0]
+    assert record_0["report_id"] == 2
+    assert record_0["id"] == 1
+    assert record_0["date"] == dummy_assets[0]["date"]
+    assert record_0["description"] == dummy_assets[0]["description"]
+    assert record_0["value"] == dummy_assets[0]["value"]
 
     # verify delete verb
     resp = requests.delete(
@@ -72,8 +90,11 @@ def test_asset_resource_success(
         timeout=5,
     )
     assert len(assets.json()) == len(dummy_assets) - 1
-    assert assets.json()[0]["id"] == 2
-
+    record_0 = assets.json()[0]
+    assert record_0["id"] == 2
+    assert record_0["date"] == dummy_assets[1]["date"]
+    assert record_0["description"] == dummy_assets[1]["description"]
+    assert record_0["value"] == dummy_assets[1]["value"]
 
 @pytest.mark.parametrize("base_access_app", ["users_schema"], indirect=True)
 def test_asset_resource_errors(

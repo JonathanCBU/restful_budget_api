@@ -46,7 +46,6 @@ class Users(Resource):  # type: ignore [misc]
     def post(self) -> Tuple[Dict[str, Any], int]:
         """create a new user and return the user API key"""
         args = self.parser.parse_args()
-        print(request.json)
         if not args["username"]:
             return ({"error": "no username provided"}, 400)
         try:

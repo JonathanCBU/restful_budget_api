@@ -136,4 +136,4 @@ def db_add_new_record(table: str, insert: Dict[str, Any]) -> Dict[str, Any]:
         sql=f"SELECT * FROM {table} WHERE id = ?",
         data=(record_id,),
     )
-    return db_build_record(fetch=fetch, schema=list(insert.keys()))
+    return db_build_record(fetch=fetch, schema=db_get_schema(table))
