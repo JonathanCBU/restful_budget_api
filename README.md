@@ -21,7 +21,7 @@ I started this project as a way to learn the basics of REST APIs and fullstack c
 3. Run setup entry point to configure .env and .db
     - `poetry run setup`
 4. Run unit tests to make sure everything runs correctly
-    - `poetry run pytest
+    - `poetry run pytest`
     - Note: I am still working out a `Max retries exceeded with url: ` error that shows up sometimes. If that happens move on to the next section.
 
 ## Running the flask server
