@@ -32,6 +32,9 @@ def test_user_success(admin_access_app: Process, dummy_users: List[str]) -> None
             timeout=5,
         )
         assert resp.status_code == 201
+        resp_json = resp.json()
+        assert resp_json["username"] == user
+        assert len(resp_json["password"]) == 32
 
     # verify delete of user
     all_users = requests.get(f"{test_globals.DEFAULT_URL}/users", timeout=5)
