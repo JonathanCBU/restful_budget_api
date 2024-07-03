@@ -39,7 +39,6 @@ def api_key_required(func: F) -> F:
         api_keys = [
             api_key[0] for api_key in db_fetchall(sql="SELECT password FROM users")
         ]
-        print(api_keys)
         if user_key not in api_keys:
             return ({"error": "API key not valid"}, 401)
         return cast(F, func(*args, **kwargs))
@@ -52,8 +51,6 @@ def strict_verbiage(func: F) -> F:
 
     @functools.wraps(func)
     def decorator(*args: Any, **kwargs: Any) -> Union[F, Tuple[Dict[str, str], int]]:
-        print(func.__name__)
-        print(request.method)
         if func.__name__ != request.method.lower():
             return (
                 {"error": f"user {request.method} verb with {func.__name__} method"},
