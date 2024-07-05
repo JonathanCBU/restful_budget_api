@@ -1,0 +1,49 @@
+name: On New Release/Tag
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+jobs:
+  tag-version-checks:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.verify-tag.outputs.tag }}
+    env:
+      PYTHON_VERSION: 3.10.12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+      - name: Install project with poetry
+        run: |
+          poetry install
+      - name: Run CI Entry Point
+        id: verify-tag
+        run: |
+          echo "tag=$(poetry run ci --pyproject ${{ github.workspace }}/pyproject.toml --tag ${{ github.ref_name }})" >> $GITHUB_OUTPUT
+
+  draft-release:
+    runs-on: ubuntu-latest
+    needs: tag-version-checks
+    steps:
+      - name: Create draft release
+        uses: ncipollo/release-action@v1.13.0
+        with:
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.tag-version-checks.outputs.tag }}
+          commit: ${{ github.ref_name }}
+          draft: true
+          generateReleaseNotes: true

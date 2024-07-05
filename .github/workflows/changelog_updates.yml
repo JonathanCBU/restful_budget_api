@@ -1,0 +1,18 @@
+name: Verify Changelog Updates
+
+on: workflow_call
+
+jobs:
+  check_changelog:
+    runs-on: ubuntu-latest
+    name: Test changed-files
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v42
+      - name: Confirm Changelog Updates
+        if: contains(steps.changed-files.outputs.all_changed_files, 'CHANGELOG.md') != true
+        run: |
+          echo "CHANGELOG not Updated"
+          exit 1
