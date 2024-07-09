@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.scripts]
 runapp = "financify_api.__app__:main"
 setup = "financify_api.__setup__:main"
+ci = "financify_api.__ci__:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
