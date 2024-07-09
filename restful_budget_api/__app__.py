@@ -8,10 +8,10 @@ import dotenv
 from flask import Flask
 from flask_restful import Api
 
-from financify_api.resources.patterns import Patterns, PatternsById, PatternsByTitle
-from financify_api.resources.statements import Assets, Liabilities, Reports
-from financify_api.resources.users import Users
-from financify_api.resources.utilities import Home
+from restful_budget_api.resources.patterns import Patterns, PatternsById, PatternsByTitle
+from restful_budget_api.resources.statements import Assets, Liabilities, Reports
+from restful_budget_api.resources.users import Users
+from restful_budget_api.resources.utilities import Home
 
 
 def main() -> None:

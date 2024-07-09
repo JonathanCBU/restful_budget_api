@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Tuple
 
 from flask_restful import Resource, reqparse
 
-from financify_api.library.db_connector import (
+from restful_budget_api.library.db_connector import (
     db_add_new_record,
     db_build_record,
     db_build_table,
@@ -14,7 +14,7 @@ from financify_api.library.db_connector import (
     db_get_schema,
     db_ids,
 )
-from financify_api.library.security import api_key_required, get_user, strict_verbiage
+from restful_budget_api.library.security import api_key_required, get_user, strict_verbiage
 
 
 class KeyRestricted(Resource):  # type: ignore [misc]
