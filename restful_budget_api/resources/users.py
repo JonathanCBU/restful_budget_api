@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Tuple, Union
 
 from flask_restful import Resource, reqparse, request
 
-from financify_api.library.db_connector import (
+from restful_budget_api.library.db_connector import (
     db_build_record,
     db_build_table,
     db_commit_change,
@@ -15,7 +15,7 @@ from financify_api.library.db_connector import (
     db_get_schema,
     db_ids,
 )
-from financify_api.library.security import admin_required, strict_verbiage
+from restful_budget_api.library.security import admin_required, strict_verbiage
 
 
 class Users(Resource):  # type: ignore [misc]

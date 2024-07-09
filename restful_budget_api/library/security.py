@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, Tuple, TypeVar, Union, cast
 from flask import request
 from flask_restful import current_app
 
-from financify_api.library.db_connector import db_fetchall, db_fetchone
+from restful_budget_api.library.db_connector import db_fetchall, db_fetchone
 
 F = TypeVar("F", bound=Callable[..., Any])
 

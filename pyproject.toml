@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "financify-api"
+name = "restful-budget-api"
 version = "0.1.0"
 description = "A flask_restul app for learning REST"
 authors = ["Jonathan Cook <jcookbme@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-runapp = "financify_api.__app__:main"
-setup = "financify_api.__setup__:main"
-ci = "financify_api.__ci__:main"
+runapp = "restful_budget_api.__app__:main"
+setup = "restful_budget_api.__setup__:main"
+ci = "restful_budget_api.__ci__:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
