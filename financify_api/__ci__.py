@@ -10,7 +10,7 @@ def main() -> None:
         pyproject = toml.load(toml_file)
     version_num = pyproject["tool"]["poetry"]["version"]
     assert f"v{version_num}" == args.tag.split("/")[1]
-    print(f"::set-output name=tag::{version_num}")
+    print(version_num)
 
 
 def get_args() -> argparse.Namespace:
