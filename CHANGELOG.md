@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Project name changed to "restful_budget_api"
+
 ### Removed
 
 ## [v0.1.0] - 2024-07-08
