@@ -16,3 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [v0.1.0] - 2024-07-08
+
+### Added
+
+- Project as initially designed to operate as the back end for a larger web app (said larger app has been scrapped)
+
+### Fixed
+
+### Changed
+
+### Removed
+
