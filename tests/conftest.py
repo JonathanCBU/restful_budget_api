@@ -50,16 +50,12 @@ def dummy_users() -> List[str]:
 
 
 @pytest.fixture
-def dummy_assets() -> List[Dict[str, Union[str, float]]]:
+def dummy_expenses() -> List[Dict[str, Union[str, float]]]:
     """return a list of dummy assets"""
     return [
-        {"date": "2021-01", "description": "bank", "value": 1000.00},
-        {"date": "2021-01", "description": "investments", "value": 1234.56},
-        {"date": "2021-02", "description": "bank", "value": 1005.07},
+        {"date": "2021-01-07", "description": "dinner", "amount": 123.45},
+        {"date": "2021-03-38", "description": "groceries", "amount": 68.56},
+        {"date": "2022-12-12", "description": "rent", "amount": 1005.07},
     ]
 
 
-@pytest.fixture
-def dummy_patterns() -> Dict[str, str]:
-    """return list of dummy patterns"""
-    return {"title": "Pattern 1", "date": r"\d{4}-\d{2}", "value": r"\$(\d{3,9}\.\d{2}"}

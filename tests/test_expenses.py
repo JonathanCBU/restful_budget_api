@@ -1,4 +1,4 @@
-"""assets and liabilities endpoints testing"""
+"""expenses and liabilities endpoints testing"""
 
 # pylint: disable=unused-argument
 
@@ -13,106 +13,106 @@ from tests.library import test_globals
 
 
 @pytest.mark.parametrize("base_access_app", ["users_schema"], indirect=True)
-def test_asset_resource_success(
-    base_access_app: Process, dummy_assets: List[Dict[str, Union[str, float]]]
+def test_expense_resource_success(
+    base_access_app: Process, dummy_expenses: List[Dict[str, Union[str, float]]]
 ) -> None:
-    """Assets endpoint should be able to add assets when passing a valid api key"""
-    # verify posting assets
-    for asset in dummy_assets:
+    """Assets endpoint should be able to add expenses when passing a valid api key"""
+    # verify posting expenses
+    for expense in dummy_expenses:
         resp = requests.post(
-            f"{test_globals.DEFAULT_URL}/assets",
-            data=json.dumps(asset),
+            f"{test_globals.DEFAULT_URL}/expenses",
+            data=json.dumps(expense),
             headers={"Authorization": "pwd1", "Content-Type": "application/json"},
             timeout=5,
         )
         assert resp.status_code == 201
         resp_json = resp.json()
-        assert resp_json["date"] == asset["date"]
-        assert resp_json["description"] == asset["description"]
-        assert resp_json["value"] == asset["value"]
+        assert resp_json["date"] == expense["date"]
+        assert resp_json["description"] == expense["description"]
+        assert resp_json["amount"] == expense["amount"]
     resp = requests.get(
-        f"{test_globals.DEFAULT_URL}/assets",
+        f"{test_globals.DEFAULT_URL}/expenses",
         headers={"Authorization": "pwd1"},
         timeout=5,
     )
 
-    # verify getting assets we just posted
+    # verify getting expenses we just posted
     assert resp.status_code == 200
     assert isinstance(resp.json(), list)
-    assert len(resp.json()) == len(dummy_assets)
+    assert len(resp.json()) == len(dummy_expenses)
 
     # verify exact contents of first record
     record_0 = resp.json()[0]
-    assert record_0["date"] == dummy_assets[0]["date"]
-    assert record_0["description"] == dummy_assets[0]["description"]
-    assert record_0["value"] == dummy_assets[0]["value"]
+    assert record_0["date"] == dummy_expenses[0]["date"]
+    assert record_0["description"] == dummy_expenses[0]["description"]
+    assert record_0["amount"] == dummy_expenses[0]["amount"]
     assert record_0["id"] == 1
 
-    # verify limiting responses to user requesting assets
+    # verify limiting responses to user requesting expenses
     resp = requests.get(
-        f"{test_globals.DEFAULT_URL}/assets",
+        f"{test_globals.DEFAULT_URL}/expenses",
         headers={"Authorization": "pwd2"},
         timeout=5,
     )
     assert resp.json() == []  
 
-    # verify patch to update asset report_id
+    # verify patch to update expense report_id
     get_payload = {"report_id": 2}
     resp = requests.patch(
-        f"{test_globals.DEFAULT_URL}/assets/1",
+        f"{test_globals.DEFAULT_URL}/expenses/1",
         data=json.dumps(get_payload),
         headers={"Authorization": "pwd1", "Content-Type": "application/json"},
         timeout=5,
     )
     assert resp.status_code == 200
-    assets = requests.get(
-        f"{test_globals.DEFAULT_URL}/assets",
+    expenses = requests.get(
+        f"{test_globals.DEFAULT_URL}/expenses",
         headers={"Authorization": "pwd1"},
         timeout=5,
     )
-    record_0 = assets.json()[0]
+    record_0 = expenses.json()[0]
     assert record_0["report_id"] == 2
     assert record_0["id"] == 1
-    assert record_0["date"] == dummy_assets[0]["date"]
-    assert record_0["description"] == dummy_assets[0]["description"]
-    assert record_0["value"] == dummy_assets[0]["value"]
+    assert record_0["date"] == dummy_expenses[0]["date"]
+    assert record_0["description"] == dummy_expenses[0]["description"]
+    assert record_0["amount"] == dummy_expenses[0]["amount"]
 
     # verify delete verb
     resp = requests.delete(
-        f"{test_globals.DEFAULT_URL}/assets/1",
+        f"{test_globals.DEFAULT_URL}/expenses/1",
         headers={"Authorization": "pwd1"},
         timeout=5,
     )
     assert resp.status_code == 200
-    assets = requests.get(
-        f"{test_globals.DEFAULT_URL}/assets",
+    expenses = requests.get(
+        f"{test_globals.DEFAULT_URL}/expenses",
         headers={"Authorization": "pwd1"},
         timeout=5,
     )
-    assert len(assets.json()) == len(dummy_assets) - 1
-    record_0 = assets.json()[0]
+    assert len(expenses.json()) == len(dummy_expenses) - 1
+    record_0 = expenses.json()[0]
     assert record_0["id"] == 2
-    assert record_0["date"] == dummy_assets[1]["date"]
-    assert record_0["description"] == dummy_assets[1]["description"]
-    assert record_0["value"] == dummy_assets[1]["value"]
+    assert record_0["date"] == dummy_expenses[1]["date"]
+    assert record_0["description"] == dummy_expenses[1]["description"]
+    assert record_0["amount"] == dummy_expenses[1]["amount"]
 
 @pytest.mark.parametrize("base_access_app", ["users_schema"], indirect=True)
-def test_asset_resource_errors(
-    base_access_app: Process, dummy_assets: List[Dict[str, Union[str, float]]]
+def test_expense_resource_errors(
+    base_access_app: Process, dummy_expenses: List[Dict[str, Union[str, float]]]
 ) -> None:
-    """Assets endpoint should be able to add assets when passing a valid api key"""
-    # post assets for testing
-    for asset in dummy_assets:
+    """Assets endpoint should be able to add expenses when passing a valid api key"""
+    # post expenses for testing
+    for expense in dummy_expenses:
         resp = requests.post(
-            f"{test_globals.DEFAULT_URL}/assets",
-            data=json.dumps(asset),
+            f"{test_globals.DEFAULT_URL}/expenses",
+            data=json.dumps(expense),
             headers={"Authorization": "pwd1", "Content-Type": "application/json"},
             timeout=5,
         )
 
     # verify get behavior with bad api_key
     resp = requests.get(
-        f"{test_globals.DEFAULT_URL}/assets",
+        f"{test_globals.DEFAULT_URL}/expenses",
         headers={"Authorization": "wrong_password"},
         timeout=5,
     )
@@ -120,10 +120,10 @@ def test_asset_resource_errors(
     assert resp.json() == {"error": "API key not valid"}
 
     # verify post behavior with missing field
-    asset = {"date": "2021-01", "description": "bank"}
+    expense = {"date": "2021-01", "description": "bank"}
     resp = requests.post(
-        f"{test_globals.DEFAULT_URL}/assets",
-        data=json.dumps(asset),
+        f"{test_globals.DEFAULT_URL}/expenses",
+        data=json.dumps(expense),
         headers={"Authorization": "pwd1", "Content-Type": "application/json"},
         timeout=5,
     )
@@ -133,62 +133,52 @@ def test_asset_resource_errors(
     # verify delete error codes
     get_payload = {"api_key": "pwd1"}
     resp = requests.delete(
-        f"{test_globals.DEFAULT_URL}/assets/1000",
+        f"{test_globals.DEFAULT_URL}/expenses/1000",
         headers={"Authorization": "pwd1"},
         timeout=5,
     )
     assert resp.status_code == 400
-    assert resp.json()["error"] == "assets id invalid"
+    assert resp.json()["error"] == "expenses id invalid"
 
     resp = requests.delete(
-        f"{test_globals.DEFAULT_URL}/assets/1",
+        f"{test_globals.DEFAULT_URL}/expenses/1",
         headers={"Authorization": "pwd2"},
         timeout=5,
     )
     assert resp.status_code == 403
-    assert resp.json()["error"] == "no access to assets id 1"
+    assert resp.json()["error"] == "no access to expenses id 1"
 
     # verify patch error codes
     resp = requests.delete(
-        f"{test_globals.DEFAULT_URL}/assets/1000",
+        f"{test_globals.DEFAULT_URL}/expenses/1000",
         headers={"Authorization": "pwd1"},
         timeout=5,
     )
     assert resp.status_code == 400
-    assert resp.json()["error"] == "assets id invalid"
-
-    get_payload = {"report_id": 2}
-    resp = requests.patch(
-        f"{test_globals.DEFAULT_URL}/reports/1",
-        data=json.dumps(get_payload),
-        headers={"Authorization": "pwd1", "Content-Type": "application/json"},
-        timeout=5,
-    )
-    assert resp.status_code == 405
-    assert resp.json()["error"] == "reports does not have a patch method"
+    assert resp.json()["error"] == "expenses id invalid"
 
     resp = requests.patch(
-        f"{test_globals.DEFAULT_URL}/assets/1000",
+        f"{test_globals.DEFAULT_URL}/expenses/1000",
         data=json.dumps(get_payload),
         headers={"Authorization": "pwd1", "Content-Type": "application/json"},
         timeout=5,
     )
     assert resp.status_code == 400
-    assert resp.json()["error"] == "assets id invalid"
+    assert resp.json()["error"] == "expenses id invalid"
 
     get_payload = {"report_id": 2}
     resp = requests.patch(
-        f"{test_globals.DEFAULT_URL}/assets/1",
+        f"{test_globals.DEFAULT_URL}/expenses/1",
         data=json.dumps(get_payload),
         headers={"Authorization": "pwd2", "Content-Type": "application/json"},
         timeout=5,
     )
     assert resp.status_code == 403
-    assert resp.json()["error"] == "no access to assets id 1"
+    assert resp.json()["error"] == "no access to expenses id 1"
 
     get_payload = {"placeholder": "Silly"}
     resp = requests.patch(
-        f"{test_globals.DEFAULT_URL}/assets/1",
+        f"{test_globals.DEFAULT_URL}/expenses/1",
         data=json.dumps(get_payload),
         headers={"Authorization": "pwd1", "Content-Type": "application/json"},
         timeout=5,

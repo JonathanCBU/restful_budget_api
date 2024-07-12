@@ -1,4 +1,4 @@
-# financify_api
+# restful_budget_api
 
 ## Release Process
 
