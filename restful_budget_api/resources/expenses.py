@@ -106,4 +106,3 @@ class Expenses(Resource):  # type: ignore [misc]
             sql=f"DELETE FROM {self.table} WHERE id = ?", data=(record_id,)
         )
         return ({"table": self.table, "deleted_id": record_id}, 200)
-

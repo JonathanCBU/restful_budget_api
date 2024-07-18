@@ -55,7 +55,7 @@ def test_expense_resource_success(
         headers={"Authorization": "pwd2"},
         timeout=5,
     )
-    assert resp.json() == []  
+    assert resp.json() == []
 
     # verify delete verb
     resp = requests.delete(
@@ -75,6 +75,7 @@ def test_expense_resource_success(
     assert record_0["date"] == dummy_expenses[1]["date"]
     assert record_0["description"] == dummy_expenses[1]["description"]
     assert record_0["amount"] == dummy_expenses[1]["amount"]
+
 
 def test_expense_resource_errors(
     base_access_app: Process, dummy_expenses: List[Dict[str, Union[str, float]]]
@@ -127,4 +128,3 @@ def test_expense_resource_errors(
     )
     assert resp.status_code == 403
     assert resp.json()["error"] == "no access to expenses id 1"
-
