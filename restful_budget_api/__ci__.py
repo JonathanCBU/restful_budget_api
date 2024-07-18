@@ -1,6 +1,7 @@
 import argparse
-import toml
 import os
+
+import toml
 
 
 def main() -> None:

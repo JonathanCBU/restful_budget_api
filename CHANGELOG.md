@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Tox for test environments
+- Pytest and Black/isort test environments
+
 ### Fixed
 
 ### Changed

@@ -40,5 +40,5 @@ def insert_test_users(db_file: str) -> None:
         ),
     ]
     db_client.executemany("INSERT INTO users (username, password) VALUES (?,?)", users)
-    db_client.commit() 
+    db_client.commit()
     db_client.close()
