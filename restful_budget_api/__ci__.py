@@ -5,7 +5,9 @@ import toml
 
 
 def main() -> None:
-    """check version in toml and branch match and bubble variables up to github actions"""
+    """check version in toml and branch match and bubble variables up to github
+    actions
+    """
     args = get_args()
     with open(args.pyproject, "r", encoding="utf-8") as toml_file:
         pyproject = toml.load(toml_file)
@@ -19,7 +21,9 @@ def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--pyproject", required=True, help="absolute path to pyproject.toml file"
+        "--pyproject",
+        required=True,
+        help="absolute path to pyproject.toml file",
     )
     parser.add_argument("--tag", required=True, help="git branch name")
 

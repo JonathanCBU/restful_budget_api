@@ -1,12 +1,9 @@
 """expenses and liabilities endpoints testing"""
 
-# pylint: disable=unused-argument
-
 import json
 from multiprocessing import Process
 from typing import Dict, List, Union
 
-import pytest
 import requests
 
 from tests.library import test_globals
@@ -14,16 +11,22 @@ from tests.library.db_setup import insert_test_users
 
 
 def test_expense_resource_success(
-    base_access_app: Process, dummy_expenses: List[Dict[str, Union[str, float]]]
+    base_access_app: Process,
+    dummy_expenses: List[Dict[str, Union[str, float]]],
 ) -> None:
-    """Assets endpoint should be able to add expenses when passing a valid api key"""
+    """Assets endpoint should be able to add expenses when passing a valid api
+    key
+    """
     # verify posting expenses
     insert_test_users(base_access_app["db"])
     for expense in dummy_expenses:
         resp = requests.post(
             f"{test_globals.DEFAULT_URL}/expenses",
             data=json.dumps(expense),
-            headers={"Authorization": "pwd1", "Content-Type": "application/json"},
+            headers={
+                "Authorization": "pwd1",
+                "Content-Type": "application/json",
+            },
             timeout=5,
         )
         assert resp.status_code == 201
@@ -78,16 +81,21 @@ def test_expense_resource_success(
 
 
 def test_expense_resource_errors(
-    base_access_app: Process, dummy_expenses: List[Dict[str, Union[str, float]]]
+    base_access_app: Process,
+    dummy_expenses: List[Dict[str, Union[str, float]]],
 ) -> None:
-    """Assets endpoint should be able to add expenses when passing a valid api key"""
+    """Assets endpoint should be able to add expenses when passing a valid api
+    key"""
     insert_test_users(base_access_app["db"])
     # post expenses for testing
     for expense in dummy_expenses:
         resp = requests.post(
             f"{test_globals.DEFAULT_URL}/expenses",
             data=json.dumps(expense),
-            headers={"Authorization": "pwd1", "Content-Type": "application/json"},
+            headers={
+                "Authorization": "pwd1",
+                "Content-Type": "application/json",
+            },
             timeout=5,
         )
 
@@ -112,7 +120,6 @@ def test_expense_resource_errors(
     assert resp.json()["error"] == "field amount not provided"
 
     # verify delete error codes
-    get_payload = {"api_key": "pwd1"}
     resp = requests.delete(
         f"{test_globals.DEFAULT_URL}/expenses/1000",
         headers={"Authorization": "pwd1"},

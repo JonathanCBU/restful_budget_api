@@ -4,7 +4,7 @@ import uuid
 from sqlite3 import IntegrityError
 from typing import Any, Dict, List, Tuple, Union
 
-from flask_restful import Resource, reqparse, request
+from flask_restful import Resource, reqparse
 
 from restful_budget_api.library.db_connector import (
     db_build_record,
@@ -30,13 +30,17 @@ class Users(Resource):  # type: ignore [misc]
 
     @strict_verbiage
     @admin_required
-    def get(self, user_id: int = 0) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
+    def get(
+        self, user_id: int = 0
+    ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
         """get user table
 
         :param user_id: id number of user to get if only one desired
         """
         if user_id != 0:
-            user = db_fetchone(f"SELECT * FROM {self.table} WHERE id = ?", (user_id,))
+            user = db_fetchone(
+                f"SELECT * FROM {self.table} WHERE id = ?", (user_id,)
+            )
             return db_build_record(fetch=user, schema=self.schema)
         response = db_fetchall(f"SELECT * FROM {self.table}")
         return db_build_table(fetch=response, schema=self.schema)
@@ -55,7 +59,8 @@ class Users(Resource):  # type: ignore [misc]
                 (args["username"], api_key),
             )
             user = db_fetchone(
-                f"SELECT * FROM {self.table} WHERE username = ?", (args["username"],)
+                f"SELECT * FROM {self.table} WHERE username = ?",
+                (args["username"],),
             )
             return (db_build_record(fetch=user, schema=self.schema), 201)
         except IntegrityError:
@@ -71,5 +76,7 @@ class Users(Resource):  # type: ignore [misc]
         valid_ids = db_ids(self.table)
         if user_id not in valid_ids:
             return ({"error": f"{self.table} id invalid"}, 400)
-        db_commit_change(sql=f"DELETE FROM {self.table} WHERE id = ?", data=(user_id,))
+        db_commit_change(
+            sql=f"DELETE FROM {self.table} WHERE id = ?", data=(user_id,)
+        )
         return ({"table": self.table, "deleted_id": user_id}, 200)

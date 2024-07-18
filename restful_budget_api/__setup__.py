@@ -8,7 +8,9 @@ import dotenv
 
 def main() -> None:
     """create database file"""
-    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../.env")
+    env_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "../.env"
+    )
     if not os.path.exists(env_path):
         dotenv.set_key(
             dotenv_path=env_path,
@@ -20,7 +22,9 @@ def main() -> None:
         os.makedirs(os.path.dirname(os.environ["DEMO_DB"]))
     db_client = sqlite3.connect(os.environ["DEMO_DB"])
     with open(
-        os.path.join(os.path.dirname(__file__), "schema.sql"), "r", encoding="utf-8"
+        os.path.join(os.path.dirname(__file__), "schema.sql"),
+        "r",
+        encoding="utf-8",
     ) as schema:
         db_client.executescript(schema.read())
     db_client.close()

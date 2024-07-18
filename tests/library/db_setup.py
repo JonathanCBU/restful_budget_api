@@ -11,7 +11,7 @@ def make_db(db_file: str) -> str:
     """
     db_client = sqlite3.connect(db_file)
     schema_file = os.path.join(
-        os.path.dirname(__file__), f"../../restful_budget_api/schema.sql"
+        os.path.dirname(__file__), "../../restful_budget_api/schema.sql"
     )
     with open(schema_file, "r", encoding="utf-8") as schema:
         db_client.executescript(schema.read())
@@ -39,6 +39,8 @@ def insert_test_users(db_file: str) -> None:
             "pwd3",
         ),
     ]
-    db_client.executemany("INSERT INTO users (username, password) VALUES (?,?)", users)
+    db_client.executemany(
+        "INSERT INTO users (username, password) VALUES (?,?)", users
+    )
     db_client.commit()
     db_client.close()

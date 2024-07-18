@@ -59,7 +59,9 @@ class PatternsById(Resource):  # type: ignore [misc]
 
         :param id_num: pattern id
         """
-        pattern = db_fetchone(f"SELECT * FROM {self.table} WHERE id = ?", (id_num,))
+        pattern = db_fetchone(
+            f"SELECT * FROM {self.table} WHERE id = ?", (id_num,)
+        )
         return (db_build_record(fetch=pattern, schema=self.schema), 200)
 
 

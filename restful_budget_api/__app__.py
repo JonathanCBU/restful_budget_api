@@ -49,7 +49,9 @@ def create_api(app: Flask) -> Api:
 def get_args() -> argparse.Namespace:
     """Parse server CLI"""
     parser = argparse.ArgumentParser(
-        description="Command line args for starting the Financify backend server"
+        description=(
+            "Command line args for starting the Financify backend server"
+        )
     )
     parser.add_argument(
         "--debug",
@@ -60,7 +62,9 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--admin", action="store_true", default=False, help="Run app as admin"
     )
-    parser.add_argument("--db", default=os.environ["DEMO_DB"], help="Select DB file")
+    parser.add_argument(
+        "--db", default=os.environ["DEMO_DB"], help="Select DB file"
+    )
     parser.add_argument(
         "--host",
         default=None,

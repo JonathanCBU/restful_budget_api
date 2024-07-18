@@ -1,6 +1,5 @@
 """test the home endpoint"""
 
-# pylint: disable=unused-argument
 from multiprocessing import Process
 
 import requests
