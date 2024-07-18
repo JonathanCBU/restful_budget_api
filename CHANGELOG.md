@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Project name changed to "restful_budget_api"
 - Unit tests of assets replaced with test for expenses
+- Expenses endpoint added and unit tests fixed to pass
 
 ### Removed
 
