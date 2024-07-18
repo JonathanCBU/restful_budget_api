@@ -10,14 +10,15 @@ import pytest
 import requests
 
 from tests.library import test_globals
+from tests.library.db_setup import insert_test_users
 
 
-@pytest.mark.parametrize("base_access_app", ["users_schema"], indirect=True)
 def test_expense_resource_success(
     base_access_app: Process, dummy_expenses: List[Dict[str, Union[str, float]]]
 ) -> None:
     """Assets endpoint should be able to add expenses when passing a valid api key"""
     # verify posting expenses
+    insert_test_users(base_access_app["db"])
     for expense in dummy_expenses:
         resp = requests.post(
             f"{test_globals.DEFAULT_URL}/expenses",
@@ -56,27 +57,6 @@ def test_expense_resource_success(
     )
     assert resp.json() == []  
 
-    # verify patch to update expense report_id
-    get_payload = {"report_id": 2}
-    resp = requests.patch(
-        f"{test_globals.DEFAULT_URL}/expenses/1",
-        data=json.dumps(get_payload),
-        headers={"Authorization": "pwd1", "Content-Type": "application/json"},
-        timeout=5,
-    )
-    assert resp.status_code == 200
-    expenses = requests.get(
-        f"{test_globals.DEFAULT_URL}/expenses",
-        headers={"Authorization": "pwd1"},
-        timeout=5,
-    )
-    record_0 = expenses.json()[0]
-    assert record_0["report_id"] == 2
-    assert record_0["id"] == 1
-    assert record_0["date"] == dummy_expenses[0]["date"]
-    assert record_0["description"] == dummy_expenses[0]["description"]
-    assert record_0["amount"] == dummy_expenses[0]["amount"]
-
     # verify delete verb
     resp = requests.delete(
         f"{test_globals.DEFAULT_URL}/expenses/1",
@@ -96,11 +76,11 @@ def test_expense_resource_success(
     assert record_0["description"] == dummy_expenses[1]["description"]
     assert record_0["amount"] == dummy_expenses[1]["amount"]
 
-@pytest.mark.parametrize("base_access_app", ["users_schema"], indirect=True)
 def test_expense_resource_errors(
     base_access_app: Process, dummy_expenses: List[Dict[str, Union[str, float]]]
 ) -> None:
     """Assets endpoint should be able to add expenses when passing a valid api key"""
+    insert_test_users(base_access_app["db"])
     # post expenses for testing
     for expense in dummy_expenses:
         resp = requests.post(
@@ -128,7 +108,7 @@ def test_expense_resource_errors(
         timeout=5,
     )
     assert resp.status_code == 400
-    assert resp.json()["error"] == "field value not provided"
+    assert resp.json()["error"] == "field amount not provided"
 
     # verify delete error codes
     get_payload = {"api_key": "pwd1"}
@@ -148,40 +128,3 @@ def test_expense_resource_errors(
     assert resp.status_code == 403
     assert resp.json()["error"] == "no access to expenses id 1"
 
-    # verify patch error codes
-    resp = requests.delete(
-        f"{test_globals.DEFAULT_URL}/expenses/1000",
-        headers={"Authorization": "pwd1"},
-        timeout=5,
-    )
-    assert resp.status_code == 400
-    assert resp.json()["error"] == "expenses id invalid"
-
-    resp = requests.patch(
-        f"{test_globals.DEFAULT_URL}/expenses/1000",
-        data=json.dumps(get_payload),
-        headers={"Authorization": "pwd1", "Content-Type": "application/json"},
-        timeout=5,
-    )
-    assert resp.status_code == 400
-    assert resp.json()["error"] == "expenses id invalid"
-
-    get_payload = {"report_id": 2}
-    resp = requests.patch(
-        f"{test_globals.DEFAULT_URL}/expenses/1",
-        data=json.dumps(get_payload),
-        headers={"Authorization": "pwd2", "Content-Type": "application/json"},
-        timeout=5,
-    )
-    assert resp.status_code == 403
-    assert resp.json()["error"] == "no access to expenses id 1"
-
-    get_payload = {"placeholder": "Silly"}
-    resp = requests.patch(
-        f"{test_globals.DEFAULT_URL}/expenses/1",
-        data=json.dumps(get_payload),
-        headers={"Authorization": "pwd1", "Content-Type": "application/json"},
-        timeout=5,
-    )
-    assert resp.status_code == 400
-    assert resp.json()["error"] == "field report_id not provided"

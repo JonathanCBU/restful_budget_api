@@ -54,10 +54,10 @@ I started this project as a way to learn the basics of REST APIs and fullstack c
 4. Optional, check that you can't create another user account when the server is not in admin mode
     - `curl http://localhost:5000/users -v -d '{"username":"user2"}' -H "Content-Type: application/json" -X POST`
 5. Add some records to the db
-    - `curl http://localhost:5000/assets -v -d '{"date":"2024-01", "description":"bank", "value":"10101.97"}' -H "Content-Type: application/json" -H "Authorization: my_key" -X POST`
-    - `curl http://localhost:5000/assets -v -d '{"date":"2024-02", "description":"one starry share", "value":"0.097"}' -H "Content-Type: application/json" -H "Authorization: my_key" -X POST`
-6. Read back the assets for user1
-    - `curl http://localhost:5000/assets -v -H "Authorization: my_key" -X GET`
+    - `curl http://localhost:5000/expenses -v -d '{"date":"2024-01", "description":"bank", "amount":"10101.97"}' -H "Content-Type: application/json" -H "Authorization: my_key" -X POST`
+    - `curl http://localhost:5000/expenses -v -d '{"date":"2024-02", "description":"one starry share", "amount":"0.097"}' -H "Content-Type: application/json" -H "Authorization: my_key" -X POST`
+6. Read back the expenses for user1
+    - `curl http://localhost:5000/expenses -v -H "Authorization: my_key" -X GET`
 
 ## Explanation of This Project
 
@@ -92,7 +92,7 @@ I started this project as a way to learn the basics of REST APIs and fullstack c
 - [Flask Restful Minimal API Example](https://flask-restful.readthedocs.io/en/latest/quickstart.html#a-minimal-api)
     - Takeaways:
         - Can configure endpoints so part of the endpoint is used for data processing
-            - Example: assets/1 explicitly references the asset with ID = 1
+            - Example: expenses/1 explicitly references the asset with ID = 1
         - Resources can handle JSON data sent with the HTTP request
             - This means we have at least 2 methods for passing data to the API as part of a request
 

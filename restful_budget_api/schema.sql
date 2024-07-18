@@ -5,40 +5,11 @@ CREATE TABLE IF NOT EXISTS users (
   UNIQUE (username)
 );
 
-CREATE TABLE IF NOT EXISTS assets (
+CREATE TABLE IF NOT EXISTS expenses (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
-  report_id INTEGER,
   date TEXT NOT NULL,
   description TEXT NOT NULL,
-  value REAL NOT NULL,
-  FOREIGN KEY(user_id) REFERENCES user(id),
-  FOREIGN KEY(report_id) REFERENCES reports(id)
-);
-
-CREATE TABLE IF NOT EXISTS liabilities (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  report_id INTEGER,
-  date TEXT NOT NULL,
-  description TEXT NOT NULL,
-  value REAL NOT NULL,
-  FOREIGN KEY(user_id) REFERENCES user(id),
-  FOREIGN KEY(report_id) REFERENCES reports(id)
-);
-
-CREATE TABLE IF NOT EXISTS reports (
-  id INTEGER PRIMARY KEY,
-  user_id INTEGER NOT NULL,
-  date TEXT NOT NULL,
-  net_worth REAL NOT NULL,
+  amount REAL NOT NULL,
   FOREIGN KEY(user_id) REFERENCES user(id)
 );
-
-CREATE TABLE IF NOT EXISTS patterns (
-  id INTEGER PRIMARY KEY,
-  title TEXT,
-  date TEXT,
-  value TEXT,
-  UNIQUE (title)
-)
