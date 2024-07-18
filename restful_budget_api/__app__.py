@@ -8,8 +8,7 @@ import dotenv
 from flask import Flask
 from flask_restful import Api
 
-from restful_budget_api.resources.patterns import Patterns, PatternsById, PatternsByTitle
-from restful_budget_api.resources.statements import Assets, Liabilities, Reports
+from restful_budget_api.resources.expenses import Expenses
 from restful_budget_api.resources.users import Users
 from restful_budget_api.resources.utilities import Home
 
@@ -41,13 +40,8 @@ def create_api(app: Flask) -> Api:
     :param app: Flask app
     """
     api = Api(app)
-    api.add_resource(Assets, "/assets", "/assets/<int:record_id>")
-    api.add_resource(Liabilities, "/liabilities", "/liabilities/<int:record_id>")
-    api.add_resource(Reports, "/reports", "/reports/<int:record_id>")
     api.add_resource(Users, "/users", "/users/<int:user_id>")
-    api.add_resource(Patterns, "/patterns", "/patterns/")
-    api.add_resource(PatternsByTitle, "/patterns/byTitle/<string:title>")
-    api.add_resource(PatternsById, "/patterns/byId/<int:id_num>")
+    api.add_resource(Expenses, "/expenses", "/expenses/<int:record_id>")
     api.add_resource(Home, "/home")
     return api
 

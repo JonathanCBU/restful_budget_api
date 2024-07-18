@@ -1,4 +1,4 @@
-"""statements tables resources"""
+"""expenses endpoint"""
 
 from typing import Any, Dict, List, Tuple
 
@@ -14,16 +14,30 @@ from restful_budget_api.library.db_connector import (
     db_get_schema,
     db_ids,
 )
-from restful_budget_api.library.security import api_key_required, get_user, strict_verbiage
+from restful_budget_api.library.security import (
+    api_key_required,
+    get_user,
+    strict_verbiage,
+)
 
 
-class KeyRestricted(Resource):  # type: ignore [misc]
-    """assets and liabilities table resource"""
+class Expenses(Resource):  # type: ignore [misc]
+    """expenses resource
 
-    def __init__(self, table: str, parser: reqparse.RequestParser) -> None:
+    HTTP verbs:
+        - get
+        - post
+        - delete
+        - patch
+    """
+
+    def __init__(self) -> None:
         super().__init__()
-        self.parser = parser
-        self.table = table
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument("date", type=str)
+        self.parser.add_argument("description", type=str)
+        self.parser.add_argument("amount", type=float)
+        self.table = "expenses"
         self.schema = db_get_schema(self.table)
 
     def verify_record_id(self, record_id: int) -> bool:
@@ -67,7 +81,7 @@ class KeyRestricted(Resource):  # type: ignore [misc]
     @api_key_required
     def post(self) -> Tuple[Dict[str, Any], int]:
         """add new record to table"""
-        required_args = ["date", "value", "description"]
+        required_args = ["date", "amount", "description"]
         args = self.parser.parse_args()
         for field in required_args:
             if not args.get(field):
@@ -93,60 +107,3 @@ class KeyRestricted(Resource):  # type: ignore [misc]
         )
         return ({"table": self.table, "deleted_id": record_id}, 200)
 
-    @strict_verbiage
-    @api_key_required
-    def patch(self, record_id: int = 0) -> Tuple[Dict[str, Any], int]:
-        """Update report ID key for assets and liabilities
-
-        :param record_id: id number of record to change
-        """
-        if self.table == "reports":
-            return ({"error": f"{self.table} does not have a patch method"}, 405)
-        if not self.verify_record_id(record_id):
-            return ({"error": f"{self.table} id invalid"}, 400)
-        if not self.verify_user_ownership(record_id):
-            return ({"error": f"no access to {self.table} id {record_id}"}, 403)
-        args = self.parser.parse_args()
-        if not args.get("report_id"):
-            return ({"error": "field report_id not provided"}, 400)
-        db_commit_change(
-            sql=f"UPDATE {self.table} SET report_id = ? WHERE id = ?",
-            data=(args["report_id"], record_id),
-        )
-        return ({"table": self.table, "updated_id": record_id}, 200)
-
-
-class Statements(KeyRestricted):
-    """Financial Statements parent resource"""
-
-    def __init__(self, table: str) -> None:
-        parser = reqparse.RequestParser()
-        parser.add_argument("date", type=str)
-        parser.add_argument("description", type=str)
-        parser.add_argument("value", type=float)
-        parser.add_argument("report_id", type=int)
-        super().__init__(table=table, parser=parser)
-
-
-class Liabilities(Statements):
-    """Liabilities instance of statements"""
-
-    def __init__(self) -> None:
-        super().__init__(table="liabilities")
-
-
-class Assets(Statements):
-    """Assets instance of statements"""
-
-    def __init__(self) -> None:
-        super().__init__(table="assets")
-
-
-class Reports(KeyRestricted):
-    """Reports table resource"""
-
-    def __init__(self) -> None:
-        parser = reqparse.RequestParser()
-        parser.add_argument("date", type=str)
-        parser.add_argument("net_worth", type=str)
-        super().__init__(table="reports", parser=parser)
