@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Tox for test environments
 - Pytest and Black/isort test environments
+- Test env for linting using pylint
 
 ### Fixed
 

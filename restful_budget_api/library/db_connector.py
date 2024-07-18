@@ -33,7 +33,9 @@ def db_build_record(fetch: Tuple[Any], schema: List[str]) -> Dict[str, Any]:
     return record
 
 
-def db_build_table(fetch: List[Tuple[Any]], schema: List[str]) -> List[Dict[str, Any]]:
+def db_build_table(
+    fetch: List[Tuple[Any]], schema: List[str]
+) -> List[Dict[str, Any]]:
     """create a list of record objects
 
     :param fetch: record list response
@@ -48,7 +50,9 @@ def db_build_table(fetch: List[Tuple[Any]], schema: List[str]) -> List[Dict[str,
     return records
 
 
-def db_fetchone(sql: str, data: Tuple[Any, ...] = tuple("")) -> Union[Tuple[Any], None]:
+def db_fetchone(
+    sql: str, data: Tuple[Any, ...] = tuple("")
+) -> Union[Tuple[Any], None]:
     """get single record response from database
 
     :param sql: formatted SQL statement
@@ -66,7 +70,9 @@ def db_fetchone(sql: str, data: Tuple[Any, ...] = tuple("")) -> Union[Tuple[Any]
     return tuple(fetch)
 
 
-def db_fetchall(sql: str, data: Tuple[Any, ...] = tuple("")) -> List[Tuple[Any]]:
+def db_fetchall(
+    sql: str, data: Tuple[Any, ...] = tuple("")
+) -> List[Tuple[Any]]:
     """get table or subset of table form database
 
     :param sql: formatted SQL statement

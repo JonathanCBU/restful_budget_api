@@ -57,7 +57,8 @@ class Expenses(Resource):  # type: ignore [misc]
         """
         record = db_build_record(
             fetch=db_fetchone(
-                sql=f"SELECT * FROM {self.table} WHERE id = ?", data=(record_id,)
+                sql=f"SELECT * FROM {self.table} WHERE id = ?",
+                data=(record_id,),
             ),
             schema=self.schema,
         )
@@ -101,7 +102,10 @@ class Expenses(Resource):  # type: ignore [misc]
         if not self.verify_record_id(record_id):
             return ({"error": f"{self.table} id invalid"}, 400)
         if not self.verify_user_ownership(record_id):
-            return ({"error": f"no access to {self.table} id {record_id}"}, 403)
+            return (
+                {"error": f"no access to {self.table} id {record_id}"},
+                403,
+            )
         db_commit_change(
             sql=f"DELETE FROM {self.table} WHERE id = ?", data=(record_id,)
         )
