@@ -26,6 +26,7 @@ isort = {extras = ["colors"], version = "^5.11.4"}
 ipython = "*"
 tox = "^4.16.0"
 flake8 = "^7.1.0"
+mypy = "^1.10.1"
 
 [build-system]
 requires = ["poetry-core"]
