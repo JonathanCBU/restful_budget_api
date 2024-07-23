@@ -1,7 +1,7 @@
 """API DB connection functions"""
 
 import sqlite3
-from typing import Any, Dict, List, Tuple, Union, cast
+from typing import Any, Dict, List, Tuple
 
 from flask import current_app
 
@@ -52,7 +52,7 @@ def db_build_table(
 
 def db_fetchone(
     sql: str, data: Tuple[Any, ...] = tuple("")
-) -> Union[Tuple[Any], None]:
+) -> sqlite3.Row:
     """get single record response from database
 
     :param sql: formatted SQL statement
@@ -61,14 +61,16 @@ def db_fetchone(
     db_client = sqlite3.connect(
         current_app.config["DATABASE"], detect_types=sqlite3.PARSE_DECLTYPES
     )
-    if not isinstance(db_client, sqlite3.Connection):
-        raise LookupError("Could not connect to database")
+    db_client.row_factory = sqlite3.Row
     fetch = db_client.execute(sql, data).fetchone()
     db_client.close()
     if fetch is None:
-        return None
-    return tuple(fetch)
-
+        row = sqlite3.Row(fetch, ())
+    if not isinstance(fetch, sqlite3.Row):
+        raise TypeError(f"query: {sql} and data: {data} returned a non-Row type")
+    else:
+        row = fetch
+    return row
 
 def db_fetchall(
     sql: str, data: Tuple[Any, ...] = tuple("")
@@ -110,8 +112,7 @@ def db_next_id(table: str) -> int:
     :param table: table name
     """
     fetch = db_fetchone(f"SELECT * FROM SQLITE_SEQUENCE WHERE name='{table}'")
-    if fetch is not None:
-        fetch = cast(Tuple[str, int], fetch)
+    if isinstance(fetch, tuple) and len(fetch) >= 2:
         return int(fetch[1] + 1)
     return 1
 

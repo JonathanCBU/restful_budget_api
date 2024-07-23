@@ -21,14 +21,13 @@ from restful_budget_api.library.security import (
 )
 
 
-class Expenses(Resource):  # type: ignore [misc]
+class Expenses(Resource):  
     """expenses resource
 
     HTTP verbs:
         - get
         - post
         - delete
-        - patch
     """
 
     def __init__(self) -> None:
