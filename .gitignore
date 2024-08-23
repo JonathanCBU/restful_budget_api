@@ -160,3 +160,6 @@ cython_debug/
 #.idea/
 # database files
 *.db
+
+# underscored archives
+_archive/
