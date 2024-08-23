@@ -7,7 +7,7 @@ from typing import Dict, Iterator, List, Union
 
 import pytest
 
-from restful_budget_api.__app__ import create_api, create_app
+from restful_budget_api.archive.__app__ import create_api, create_app
 from tests.library.db_setup import make_db
 
 
