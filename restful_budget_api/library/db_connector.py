@@ -6,53 +6,33 @@ from typing import Any, Dict, List, Tuple
 from flask import current_app
 
 
-def db_get_schema(table: str) -> List[str]:
-    """get table field names
-
-    :param table: table name
-    """
-    db_client = sqlite3.connect(
-        current_app.config["DATABASE"], detect_types=sqlite3.PARSE_DECLTYPES
-    )
-    if not isinstance(db_client, sqlite3.Connection):
-        raise LookupError("Could not connect to database")
-    fetch = db_client.execute(f"SELECT * FROM {table}")
-    db_client.close()
-    return [field[0] for field in fetch.description]
-
-
-def db_build_record(fetch: Tuple[Any], schema: List[str]) -> Dict[str, Any]:
+def db_build_record(row: sqlite3.Row) -> Dict[str, Any]:
     """create a hashmap based on table schema
 
-    :param fetch: record response
-    :param schema: table field names
+    :param row: record response
     """
-    record = {}
-    for key, val in zip(schema, fetch):
-        record[key] = val
+    record = dict.fromkeys(row.keys()) 
+    for col in row:
+        record[col] == row[col]
     return record
 
-
 def db_build_table(
-    fetch: List[Tuple[Any]], schema: List[str]
+   rows: List[sqlite3.Row] 
 ) -> List[Dict[str, Any]]:
     """create a list of record objects
 
-    :param fetch: record list response
-    :param schema: table field names
+    :param table: record list response
     """
     records = []
-    for row in fetch:
-        record = {}
-        for key, val in zip(schema, row):
-            record[key] = val
+    for row in rows:
+        record = dict.fromkeys(rows[0].keys()) 
+        for col in record:
+            record[col] = row[col]
         records.append(record)
     return records
 
 
-def db_fetchone(
-    sql: str, data: Tuple[Any, ...] = tuple("")
-) -> sqlite3.Row:
+def db_fetchone(sql: str, data: Tuple[Any, ...] = tuple("")) -> sqlite3.Row:
     """get single record response from database
 
     :param sql: formatted SQL statement
@@ -62,19 +42,25 @@ def db_fetchone(
         current_app.config["DATABASE"], detect_types=sqlite3.PARSE_DECLTYPES
     )
     db_client.row_factory = sqlite3.Row
-    fetch = db_client.execute(sql, data).fetchone()
+    db_cur = db_client.execute(sql, data)
+    fetch = db_cur.fetchone()
     db_client.close()
     if fetch is None:
-        row = sqlite3.Row(fetch, ())
+        row = sqlite3.Row(db_cur, ())
     if not isinstance(fetch, sqlite3.Row):
-        raise TypeError(f"query: {sql} and data: {data} returned a non-Row type")
+        raise TypeError(
+            f"query: {sql} and data: {data} returned a non-Row type"
+        )
     else:
         row = fetch
+    for r in row.keys():
+        print(f"{r} : {row[r]}")
     return row
+
 
 def db_fetchall(
     sql: str, data: Tuple[Any, ...] = tuple("")
-) -> List[Tuple[Any]]:
+) -> List[sqlite3.Row]:
     """get table or subset of table form database
 
     :param sql: formatted SQL statement
@@ -83,11 +69,19 @@ def db_fetchall(
     db_client = sqlite3.connect(
         current_app.config["DATABASE"], detect_types=sqlite3.PARSE_DECLTYPES
     )
-    if not isinstance(db_client, sqlite3.Connection):
-        raise LookupError("Could not connect to database")
-    fetch = db_client.execute(sql, data).fetchall()
+    db_client.row_factory = sqlite3.Row
+    db_cur = db_client.execute(sql, data)
+    fetch = db_cur.fetchall()
     db_client.close()
-    return fetch
+    if not fetch:
+        table = [sqlite3.Row(db_cur, ())]
+    if not isinstance(fetch[0], sqlite3.Row):
+        raise TypeError(
+            f"query: {sql} and data: {data} returned a non-Row type"
+        )
+    else:
+        table = fetch
+    return table
 
 
 def db_commit_change(sql: str, data: Tuple[Any, ...] = tuple("")) -> None:
@@ -111,11 +105,16 @@ def db_next_id(table: str) -> int:
 
     :param table: table name
     """
-    fetch = db_fetchone(f"SELECT * FROM SQLITE_SEQUENCE WHERE name='{table}'")
-    if isinstance(fetch, tuple) and len(fetch) >= 2:
-        return int(fetch[1] + 1)
-    return 1
-
+    db_client = sqlite3.connect(
+        current_app.config["DATABASE"], detect_types=sqlite3.PARSE_DECLTYPES
+    )
+    db_client.row_factory = sqlite3.Row
+    db_cur = db_client.execute(f"SELECT * FROM {table}")
+    db_client.close()
+    if db_cur.lastrowid is None:
+        return 1
+    else:
+        return db_cur.lastrowid + 1
 
 def db_ids(table: str) -> List[int]:
     """return list of ids within table

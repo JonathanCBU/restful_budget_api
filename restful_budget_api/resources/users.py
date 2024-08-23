@@ -12,7 +12,6 @@ from restful_budget_api.library.db_connector import (
     db_commit_change,
     db_fetchall,
     db_fetchone,
-    db_get_schema,
     db_ids,
 )
 from restful_budget_api.library.security import admin_required, strict_verbiage
@@ -24,7 +23,6 @@ class Users(Resource):  # type: ignore [misc]
     def __init__(self) -> None:
         super().__init__()
         self.table = "users"
-        self.schema = db_get_schema(self.table)
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("username")
 
@@ -41,7 +39,7 @@ class Users(Resource):  # type: ignore [misc]
             user = db_fetchone(
                 f"SELECT * FROM {self.table} WHERE id = ?", (user_id,)
             )
-            return db_build_record(fetch=user, schema=self.schema)
+            return db_build_record(row=user)
         response = db_fetchall(f"SELECT * FROM {self.table}")
         return db_build_table(fetch=response, schema=self.schema)
 

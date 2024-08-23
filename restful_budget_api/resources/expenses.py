@@ -11,7 +11,6 @@ from restful_budget_api.library.db_connector import (
     db_commit_change,
     db_fetchall,
     db_fetchone,
-    db_get_schema,
     db_ids,
 )
 from restful_budget_api.library.security import (
@@ -21,7 +20,7 @@ from restful_budget_api.library.security import (
 )
 
 
-class Expenses(Resource):  
+class Expenses(Resource):
     """expenses resource
 
     HTTP verbs:
@@ -37,7 +36,6 @@ class Expenses(Resource):
         self.parser.add_argument("description", type=str)
         self.parser.add_argument("amount", type=float)
         self.table = "expenses"
-        self.schema = db_get_schema(self.table)
 
     def verify_record_id(self, record_id: int) -> bool:
         """verify entered record id is valid
@@ -59,7 +57,6 @@ class Expenses(Resource):
                 sql=f"SELECT * FROM {self.table} WHERE id = ?",
                 data=(record_id,),
             ),
-            schema=self.schema,
         )
         if get_user() != record["user_id"]:
             return False
@@ -74,7 +71,7 @@ class Expenses(Resource):
             sql=f"SELECT * FROM {self.table} WHERE user_id = ?",
             data=(user_id,),
         )
-        table = db_build_table(fetch=response, schema=self.schema)
+        table = db_build_table(rows=response)
         return (table, 200)
 
     @strict_verbiage
