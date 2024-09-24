@@ -1,5 +1,7 @@
 # restful_budget_api
 
+__Every line of code is a liability__
+
 ## Release Process
 
 1. Create the release branch
