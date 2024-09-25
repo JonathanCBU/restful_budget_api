@@ -66,6 +66,32 @@
     echo "DEMO_DB='${PWD}/dbs/demo.db'" > <repo_root>/.env
     ```
 
+## db_context
+
+1. Create a directory at `<repo_root>/restful_budget_api/library` and place a `db_context.py` file.
+
+2. Write a `make_db` function that will read a file path and a schema file to make a sqlite db.
+
+    ```python
+    import sqlite3
+    import os
+
+    def make_db(db_file: str, schema_file: str = "") -> None:
+        """execute a schema file to make a db
+
+        :param db_file: absolute path to db file 
+        :param schema_file: absolute path to SQL schema file (leaves db empty if null string)
+        """
+        if not os.path.exists(os.path.dirname(db_file)):
+            os.makedirs(os.path.dirname(db_file))
+        db_client = sqlite3.connect(db_file)
+        if schema_file:
+            with open(schema_file, "r", encoding="utf-8") as schema:
+                db_client.executescript(schema.read())
+        db_client.close()
+    ```
+
+
 ## Summary
 
 1. We wrote a SQL file and used it to create an empty database with a one-to-many relationship between user records and the user_id property of expense records:
@@ -76,62 +102,4 @@
 
 3. We added the absolute path of our database to a .env file so Python can find the DB without a need to commit any private info from our path to the repo
 
-
-## Extra Credit (Do this all programmatically)
-
-### DIY 
-
-Add a setup poetry script that:
-
-1. Is callable from the command line by prepending `poetry run`
-2. Creates a .env file with the DEMO_DB variable
-3. Sets up the users and expenses tables using the schema.sql file
-
-### My Solution
-
-1. Add this to your pyproject.toml under [tool.poetry.scripts]
-
-    ```toml
-    setup = "restful_budget_api.__setup__:main"
-    ```
-
-2. Add dotenv to your tool.poetry.dependencies
-
-    ```toml
-    python-dotenv = "^1.0.1"
-    ```
-
-3. Copy the below code into <repo_root>/restful_budget_api/__setup__.py
-
-    ```python
-    """project setup endtry point"""
-
-    import os
-    import sqlite3
-
-    import dotenv
-
-
-    def main() -> None:
-        """create database file"""
-        env_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../.env"
-        )
-        if not os.path.exists(env_path):
-            dotenv.set_key(
-                dotenv_path=env_path,
-                key_to_set="DEMO_DB",
-                value_to_set="${PWD}/dbs/demo.db",
-            )
-        dotenv.load_dotenv()
-        if not os.path.exists(os.path.dirname(os.environ["DEMO_DB"])):
-            os.makedirs(os.path.dirname(os.environ["DEMO_DB"]))
-        db_client = sqlite3.connect(os.environ["DEMO_DB"])
-        with open(
-            os.path.join(os.path.dirname(__file__), "schema.sql"),
-            "r",
-            encoding="utf-8",
-        ) as schema:
-            db_client.executescript(schema.read())
-        db_client.close()
-    ```
+4. We added our first Python function to help us create db files in the future
