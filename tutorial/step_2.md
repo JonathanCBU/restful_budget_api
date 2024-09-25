@@ -15,6 +15,28 @@ If you haven't yet, add `python-dotenv = "^1.0.1"` as well.
 
 We also will want a poetry entry point to run the app from. Under tool.poetry.scripts add `runapp = "restful_budget_api.__app__:main"`.
 
+
+### Config classes
+
+1. Make a library directory in the module directory (`restful_budget_api/restful_budget_api/library`) and create a `configs.py` file.
+
+2. We are going to use the `from_object` configuration method described [here](https://flask.palletsprojects.com/en/3.0.x/config/#development-production), so start with a simple set of Default and Dev classes
+
+    ```python
+    import os
+    import dotenv
+    
+    dotenv.load_dotenv()
+
+    class Default:
+        TESTING = False
+        DEBUG = False
+        DATABASE = os.environ["DEMO_DB"]
+
+    class Dev(Default):
+        DEBUG = True
+    ```
+
 ### The `__app__.py`
 
 1. Make a file `restful_budget_api/__app__.py` and give it a docstring.
@@ -25,21 +47,19 @@ We also will want a poetry entry point to run the app from. Under tool.poetry.sc
     from flask import Flask
     from flask_restful import Api
     import argparse
-    import dotenv
+    import restful_budget_api.library.configs as configs
     ```
 
     - Flask and Api are the objects at the core of this project
     - argparse allows us to parse command line arguments to our Poetry entry point
-    - dotenv will read the .env file we wrote in [step 1](./step_1.md#the-env-file)
+    - configs will allow us to use the config classes in the last step
 
-3. Define four functions:
+3. Define two functions:
     
     - `main() -> None` to run the app from the entry point (no parameters, no returns).
-    - `create_app(database: str) -> Flask` to create the actual app.
-    - `create_api(app: Flask) -> Api` for creating an api object and adding endpoints.
     - `get_args() -> argparse.Namespace` to handle command line args.
         - command line args should be:
-            - debug: bool - launches app in debug mode (defaults to False)
+            - config: string - the name of the config class to use
             - host: string - host IP (defaults to None)
             - port: int - port to run app on (defaults to None)
 
@@ -49,34 +69,13 @@ We also will want a poetry entry point to run the app from. Under tool.poetry.sc
     ```python
     def main() -> None:
         """main entrypoint for running flask server"""
-        dotenv.load_dotenv()
         args = get_args()
-        app = create_app(os.environ["DEMO_DB"], args.debug)
-        api = create_api(app)
+        app = Flask(__name__)
+        app.config.from_object(getattr(configs, args.config))
+        api = Api(app)
         for resource in api.resources:
             print(f"Added resource: {resource}")
         app.run(host=args.host, port=args.port)
-
-
-    def create_app(database: str, debug: bool) -> Flask:
-        """generate the Flask object without starting the server
-
-        :param database: absolute path to your db file
-        :param debug: if True, configure server for debug mode
-        """
-        app = Flask(__name__)
-        app.config["DATABASE"] = database
-        app.config["DEBUG"] = debug
-        return app
-
-
-    def create_api(app: Flask) -> Api:
-        """create an Api and add resources with endpoints
-
-        :param app: Flask object to build Api from
-        """
-        api = Api(app)
-        return api
 
 
     def get_args() -> argparse.Namespace:
@@ -87,10 +86,9 @@ We also will want a poetry entry point to run the app from. Under tool.poetry.sc
             )
         )
         parser.add_argument(
-            "--debug",
-            action="store_true",
-            default=False,
-            help="Enable debug mode when running the app",
+            "--config",
+            default="Default",
+            help="Specify server config",
         )
         parser.add_argument(
             "--host",
@@ -105,8 +103,7 @@ We also will want a poetry entry point to run the app from. Under tool.poetry.sc
 6. Notes:
 
     - Using any host that isn't localhost exposes the flask app to your entire local network. This is fine as long as you don't put any actually sensetive information in the db.
-    - create_app and create_api are both super simple and could run in the main function without issue, we need to separate creating the Flask objects and running the processes for future testing.
-    - You should be able to run the app from the poetry entrypoint. From a terminal (in the root dir of the repo) run `poetry runapp --debug --port 9999`. There are no resources yes, so all you can get are 404 errors, but if you see something like the below output then we're on the right track!
+    - You should be able to run the app from the poetry entrypoint. From a terminal (in the root dir of the repo) run `poetry runapp --config Dev --port 9999`. There are no resources so all you can get are 404 errors, but if you see something like the below output then we're on the right track!
         ```bash
             * Serving Flask app 'restful_budget_api.__app__'
             * Debug mode: on
