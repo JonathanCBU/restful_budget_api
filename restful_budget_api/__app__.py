@@ -4,12 +4,15 @@ from flask import Flask
 from flask_restful import Api
 import argparse
 import restful_budget_api.library.configs as configs
+from restful_budget_api.library.db_context import make_db
+
 
 def main() -> None:
     """main entrypoint for running flask server"""
     args = get_args()
     app = Flask(__name__)
     app.config.from_object(getattr(configs, args.config))
+    make_db(app.config["DATABASE"], app.config["DB_SCHEMA"])
     api = Api(app)
     for resource in api.resources:
         print(f"Added resource: {resource}")

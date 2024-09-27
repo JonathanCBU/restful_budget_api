@@ -60,10 +60,12 @@
 
 ### The Env file
 
-1. Create a local .env with the path to your demo.db
+1. Create a local .env with the path to your demo.db and schema.sql
 
+    something like:
     ```bash
-    echo "DEMO_DB='${PWD}/dbs/demo.db'" > <repo_root>/.env
+    DEMO_SCHEMA='${PWD}/restful_budget_api/schema.sql'
+    DEMO_DB='${PWD}/dbs/demo.db'
     ```
 
 ## db_context
@@ -76,14 +78,19 @@
     import sqlite3
     import os
 
-    def make_db(db_file: str, schema_file: str = "") -> None:
+    def make_db(db_file: str, schema_file: str = "", overwrite: bool = False) -> None:
         """execute a schema file to make a db
-
+        
         :param db_file: absolute path to db file 
         :param schema_file: absolute path to SQL schema file (leaves db empty if null string)
+        :param overwrite: deletes existing db_file if it exists
         """
-        if not os.path.exists(os.path.dirname(db_file)):
-            os.makedirs(os.path.dirname(db_file))
+        if overwrite:
+            try:
+                os.remove(db_file)
+            except FileNotFoundError:
+                print(f"Nothing to remove, {db_file} does not exits")
+        os.makedirs(os.path.dirname(db_file), exist_ok=True)
         db_client = sqlite3.connect(db_file)
         if schema_file:
             with open(schema_file, "r", encoding="utf-8") as schema:
@@ -100,6 +107,6 @@
 
 2. We created a dummy user names tester with a password of 1234
 
-3. We added the absolute path of our database to a .env file so Python can find the DB without a need to commit any private info from our path to the repo
+3. We added the absolute path of our database and schema to a .env file so Python can find the DB without a need to commit any private info from our path to the repo (it'll also help with configs in a future step)
 
 4. We added our first Python function to help us create db files in the future

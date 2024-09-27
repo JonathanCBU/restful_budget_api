@@ -18,7 +18,7 @@ We also will want a poetry entry point to run the app from. Under tool.poetry.sc
 
 ### Config classes
 
-1. Make a library directory in the module directory (`restful_budget_api/restful_budget_api/library`) and create a `configs.py` file.
+1. Create a `library/configs.py` file.
 
 2. We are going to use the `from_object` configuration method described [here](https://flask.palletsprojects.com/en/3.0.x/config/#development-production), so start with a simple set of Default and Dev classes
 
@@ -48,11 +48,13 @@ We also will want a poetry entry point to run the app from. Under tool.poetry.sc
     from flask_restful import Api
     import argparse
     import restful_budget_api.library.configs as configs
+    from restful_budget_api.library.db_context import make_db
     ```
 
     - Flask and Api are the objects at the core of this project
     - argparse allows us to parse command line arguments to our Poetry entry point
     - configs will allow us to use the config classes in the last step
+    - make_db will make our db file and write in the config schema if it does not already exist (or we tell it to overwrite)
 
 3. Define two functions:
     
@@ -72,6 +74,7 @@ We also will want a poetry entry point to run the app from. Under tool.poetry.sc
         args = get_args()
         app = Flask(__name__)
         app.config.from_object(getattr(configs, args.config))
+        make_db(app.config["DATABASE"], app.config["DB_SCHEMA"])
         api = Api(app)
         for resource in api.resources:
             print(f"Added resource: {resource}")
