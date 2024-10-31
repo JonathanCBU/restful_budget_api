@@ -16,8 +16,15 @@ jobs:
         shell: cmd
 
       - name: Get exit code 0
-        run:  echo %errorlevel%
+        run:  set myexitcode=%errorlevel%
         shell: cmd
+
+      - name: Check myexitcode is zero
+        if: ${{ env.myexitcode == 0 }}
+        uses: actions/github-script@v3
+        with:
+          script: |
+            core.setFailed('envA and envB are not equivalent!')
 
       - name: Set env var
         run: set myexitcode=13
