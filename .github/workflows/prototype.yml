@@ -10,17 +10,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Run dir
         run: dir
         shell: cmd
-  
+
       - name: Get exit code 0
         run:  echo %errorlevel%
         shell: cmd
 
       - name: Run nonsense
-        run: x
+        run: cmd /c exit 13
         shell: cmd
 
       - name: Get exit code 1
