@@ -11,7 +11,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         
-      - name: Run automated tests  
+      - name: Run dir
         run: dir
+        shell: cmd
+  
+      - name: Get exit code 0
+        run:  echo %errorlevel%
+        shell: cmd
+
+      - name: Run nonsense
+        run: x
+        shell: cmd
+
+      - name: Get exit code 1
+        run:  echo %errorlevel%
         shell: cmd
 
