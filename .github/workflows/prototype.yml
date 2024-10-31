@@ -23,7 +23,9 @@ jobs:
         run: cmd /c exit 13
         shell: cmd
 
-      - name: Get exit code 1
-        run:  echo %errorlevel%
+      - name: Set env var
+        run: set myexitcode=13
         shell: cmd
-
+    
+      - name: Check env
+        run: echo %myexitcode%
