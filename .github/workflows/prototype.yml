@@ -1,0 +1,17 @@
+name: automated test
+run-name: automated tests
+
+on: push
+
+jobs:
+  Run-Squish-Automated-Tests:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Run automated tests  
+        run: dir
+        shell: cmd
+
