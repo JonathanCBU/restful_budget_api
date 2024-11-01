@@ -27,8 +27,11 @@ jobs:
         run: ls
         shell: bash
 
+      - name: Set errorlevel env var
+        run: export lastexitcode=$?
+
       - name: Check $
-        if: ${{ env.$? == 0 }}
+        if: ${{ env.lastexitcode == 0 }}
         uses: actions/github-script@v7
         with:
           script: |
