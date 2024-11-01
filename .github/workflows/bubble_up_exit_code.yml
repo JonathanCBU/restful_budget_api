@@ -1,0 +1,37 @@
+name: Check last exit code 
+
+on: push
+
+jobs:
+  Check-Windows-Errorlevel:
+    runs-on: windows-latest
+
+    steps:
+      - name: Run dir
+        run: dir
+        shell: cmd
+
+      - name: Check errorlevel is zero
+        if: ${{ env.errorlevel == 0 }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.info("error level is 0")
+
+
+  Check-Linux-Errorlevel:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run ls
+        run: ls
+        shell: bash
+
+      - name: Check $
+        if: ${{ env.$ == 0 }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.info("error level is 0")
+
+
